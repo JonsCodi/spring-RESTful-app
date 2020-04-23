@@ -7,6 +7,4 @@ import java.util.Optional;
 
 public interface ICoachService extends IPersonService<Coach> {
 
-    Optional<List<Coach>> findByAccrLevel(String accrLevel);
-
 }

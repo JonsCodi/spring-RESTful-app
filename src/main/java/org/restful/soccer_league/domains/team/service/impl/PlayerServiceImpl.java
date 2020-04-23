@@ -19,16 +19,6 @@ public class PlayerServiceImpl implements IPlayerService {
     private final IPlayerRepository playerRepository;
 
     @Override
-    public Optional<Player> findByNumber(int number) {
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<List<Player>> findByPosition(Position position) {
-        return Optional.empty();
-    }
-
-    @Override
     public void create(Player person) {
 
     }

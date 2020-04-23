@@ -8,7 +8,4 @@ import java.util.Optional;
 
 public interface IPlayerService extends IPersonService<Player> {
 
-    Optional<Player> findByNumber(int number);
-    Optional<List<Player>> findByPosition(Position position);
-
 }

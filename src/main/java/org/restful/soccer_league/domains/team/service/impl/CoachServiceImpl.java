@@ -18,11 +18,6 @@ public class CoachServiceImpl implements ICoachService {
     private final ICoachRepository ICoachRepository;
 
     @Override
-    public Optional<List<Coach>> findByAccrLevel(String accrLevel) {
-        return Optional.empty();
-    }
-
-    @Override
     public void create(Coach person) {
 
     }
