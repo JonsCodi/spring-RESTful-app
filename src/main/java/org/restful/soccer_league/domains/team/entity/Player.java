@@ -10,6 +10,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -29,6 +31,10 @@ public class Player extends Person {
 
     @NotBlank
     public String position;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "team_id")
+    public Team team;
 
     public Player(String name, String address, int number, Position position) {
         setName(name);

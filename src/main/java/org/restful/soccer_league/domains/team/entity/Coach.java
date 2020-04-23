@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotBlank;
 
 @Getter
@@ -27,6 +28,9 @@ public class Coach extends Person {
     private String accrLevel;
 
     private int experience;
+
+    @OneToOne(mappedBy = "coach")
+    private Team team;
 
     public Coach(String name, String address, AccrLevel accrLevel, int experience) {
         setName(name);

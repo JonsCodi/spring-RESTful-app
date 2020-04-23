@@ -1,6 +1,5 @@
 package org.restful.soccer_league.domains.team.entity;
 
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Entity;
