@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.restful.soccer_league.domains.team.entity.Player;
 import org.restful.soccer_league.domains.team.enums.Position;
-import org.restful.soccer_league.domains.team.repository.PlayerRepository;
+import org.restful.soccer_league.domains.team.repository.IPlayerRepository;
 import org.restful.soccer_league.domains.team.service.IPlayerService;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +16,7 @@ import java.util.Optional;
 @Slf4j
 public class PlayerServiceImpl implements IPlayerService {
 
-    private final PlayerRepository playerRepository;
+    private final IPlayerRepository playerRepository;
 
     @Override
     public Optional<Player> findByNumber(int number) {

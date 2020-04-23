@@ -7,7 +7,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import java.util.Optional;
 
 @NoRepositoryBean
-interface PersonBaseRepository<T extends Person> extends PagingAndSortingRepository<T, Long> {
+interface IPersonBaseRepository<T extends Person> extends PagingAndSortingRepository<T, Long> {
 
     Optional<T> findByName(String name);
 

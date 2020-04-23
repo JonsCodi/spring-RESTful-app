@@ -5,7 +5,7 @@ import org.restful.soccer_league.domains.team.entity.Player;
 import java.util.List;
 import java.util.Optional;
 
-public interface PlayerRepository extends PersonBaseRepository<Player> {
+public interface IPlayerRepository extends IPersonBaseRepository<Player> {
 
     Optional<Player> findByNumber(int number);
 

@@ -3,7 +3,6 @@ package org.restful.soccer_league.domains.team.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.restful.soccer_league.domains.team.entity.Coach;
-import org.restful.soccer_league.domains.team.repository.CoachRepository;
 import org.restful.soccer_league.domains.team.service.ICoachService;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +14,7 @@ import java.util.Optional;
 @Slf4j
 public class CoachServiceImpl implements ICoachService {
 
-    private final CoachRepository coachRepository;
+    private final org.restful.soccer_league.domains.team.repository.ICoachRepository ICoachRepository;
 
     @Override
     public Optional<List<Coach>> findByAccrLevel(String accrLevel) {
