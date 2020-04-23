@@ -14,21 +14,26 @@ public class GameServiceImpl implements IGameService {
 
     @Override
     public void create(Game game) {
+        if(game.getTeamA().equals(game.getTeamB())){
+            throw new RuntimeException("Cannot create a game with same Teams name!!!");
+        }
 
+        gameRepository.save(game);
     }
 
     @Override
     public void update(Game game) {
-
+        gameRepository.save(game);
     }
 
     @Override
     public void delete(Game game) {
-
+        gameRepository.delete(game);
     }
 
     @Override
     public void deleteById(Long id) {
-
+        gameRepository.deleteById(id);
     }
+
 }

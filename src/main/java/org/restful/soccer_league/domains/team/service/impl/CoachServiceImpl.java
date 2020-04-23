@@ -15,30 +15,38 @@ import java.util.Optional;
 @Slf4j
 public class CoachServiceImpl implements ICoachService {
 
-    private final ICoachRepository ICoachRepository;
+    private final ICoachRepository coachRepository;
 
     @Override
     public void create(Coach person) {
+        Optional<Coach> personAlreadyExist = coachRepository.findByName(person.getName());
 
+        if(personAlreadyExist.isPresent()) {
+            throw new RuntimeException("Duplicate Exception TODO:");
+        }
+
+
+        coachRepository.save(person);
     }
 
     @Override
     public void update(Coach person) {
-
+        coachRepository.save(person);
     }
 
     @Override
     public void delete(Coach person) {
-
+        coachRepository.delete(person);
     }
 
     @Override
     public void deleteById(long id) {
-
+        coachRepository.deleteById(id);
     }
 
     @Override
-    public Optional<Coach> findByName(String name) {
-        return Optional.empty();
+    public Coach findByName(String name) {
+        return coachRepository.findByName(name).orElseThrow(
+                () -> new RuntimeException("Not Found!!! TODO:"));
     }
 }

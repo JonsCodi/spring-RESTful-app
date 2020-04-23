@@ -1,5 +1,6 @@
 package org.restful.soccer_league.domains.team.entity;
 
+import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.Entity;
@@ -11,6 +12,7 @@ import javax.persistence.InheritanceType;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
+@Getter
 @Setter
 @Inheritance(strategy = InheritanceType.JOINED)
 @Entity

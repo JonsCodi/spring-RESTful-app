@@ -11,6 +11,6 @@ public interface IPersonService<T extends Person> {
     void delete(T person);
     void deleteById(long id);
 
-    Optional<T> findByName(String name);
+    T findByName(String name);
 
 }
