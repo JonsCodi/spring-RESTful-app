@@ -25,7 +25,6 @@ public class CoachServiceImpl implements ICoachService {
             throw new RuntimeException("Duplicate Exception TODO:");
         }
 
-
         coachRepository.save(person);
     }
 

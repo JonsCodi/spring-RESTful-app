@@ -17,6 +17,7 @@ public class SoccerLeagueServiceImpl implements ISoccerLeagueService {
     @Override
     public void create(SoccerLeague soccerLeague) {
         Optional<SoccerLeague> soccerLeagueAlreadyExist = soccerRepository.findByName(soccerLeague.getName());
+
         if(soccerLeagueAlreadyExist.isPresent()) {
             throw new RuntimeException("Duplicate Exception TODO:");
         }

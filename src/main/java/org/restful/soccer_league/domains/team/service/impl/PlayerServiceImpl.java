@@ -22,7 +22,6 @@ public class PlayerServiceImpl implements IPlayerService {
             throw new RuntimeException("Duplicate Exception TODO:");
         }
 
-
         playerRepository.save(person);
     }
 
