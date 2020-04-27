@@ -31,26 +31,21 @@ public class Team implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
     private String name;
 
-    @OneToOne(optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "record_id", referencedColumnName = "id")
-    @NotNull
     private Record record;
 
     @OneToMany(mappedBy = "team")
-    @NotNull
     private Set<Player> players;
 
     @OneToOne
     @JoinColumn(name = "player_id", referencedColumnName = "id")
-    @NotNull
     private Player captain;
 
     @OneToOne
     @JoinColumn(name = "coach_id", referencedColumnName = "id")
-    @NotNull
     private Coach coach;
 
 }
