@@ -20,7 +20,7 @@ import java.util.Objects;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/v1/teams")
+@RequestMapping("/teams")
 public class TeamController {
 
     private final ITeamService teamService;

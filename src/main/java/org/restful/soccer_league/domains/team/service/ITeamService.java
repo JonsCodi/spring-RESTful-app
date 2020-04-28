@@ -1,5 +1,6 @@
 package org.restful.soccer_league.domains.team.service;
 
+import org.restful.soccer_league.domains.team.entity.Person;
 import org.restful.soccer_league.domains.team.entity.Team;
 
 public interface ITeamService {
@@ -11,4 +12,5 @@ public interface ITeamService {
 
     Team findByName(String name);
 
+    Person addPerson(Team team, Person person);
 }
