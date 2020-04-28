@@ -11,6 +11,7 @@ import org.restful.soccer_league.domains.team.repository.ITeamRepository;
 import org.restful.soccer_league.domains.team.service.ITeamService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -51,6 +52,11 @@ public class TeamServiceImpl implements ITeamService {
     public Team findByName(String name) {
         return teamRepository.findByName(name).orElseThrow(
                 () -> new RuntimeException("Not Found!!! TODO:"));
+    }
+
+    @Override
+    public List<Team> findAll() {
+        return (List<Team>) teamRepository.findAll();
     }
 
     @Override

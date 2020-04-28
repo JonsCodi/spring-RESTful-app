@@ -17,7 +17,7 @@ public class PersonServiceImpl implements IPersonService {
     private final IPlayerRepository playerRepository;
 
     @Override
-    public Person create(Person person) {
+    public Person createOrUpdate(Person person) {
         if (person instanceof Coach) {
             return coachRepository.save((Coach) person);
         } else {
@@ -27,7 +27,7 @@ public class PersonServiceImpl implements IPersonService {
 
     @Override
     public Person update(Person person) {
-        return null;
+        return createOrUpdate(person);
     }
 
     @Override

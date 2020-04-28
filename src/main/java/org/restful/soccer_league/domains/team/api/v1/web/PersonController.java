@@ -36,7 +36,7 @@ public class PersonController {
 
         Person person = PersonFactory.createPerson(basePersonRequest);
 
-        person = personService.create(person);
+        person = personService.createOrUpdate(person);
 
         person = teamService.addPerson(team, person);
 
@@ -65,5 +65,48 @@ public class PersonController {
 
         return ResponseEntity.ok(persons);
     }
+
+    @PostMapping(path = "/{namePerson}")
+    public ResponseEntity remove(@PathVariable("name") String name, @PathVariable("namePerson") String namePerson) {
+        Team team = teamService.findByName(name);
+
+        if (Objects.nonNull(team.getCoach()) && team.getCoach().getName().equals(namePerson)) {
+            return removeCoach(team);
+        } else {
+            return removePlayer(namePerson, team);
+        }
+
+    }
+
+    private ResponseEntity removePlayer(String namePerson, Team team) {
+
+        Optional<Player> player = team.getPlayers().stream()
+                .filter(playerFromDB -> playerFromDB.getName().equals(namePerson))
+                .findAny();
+
+        if (player.isPresent()) {
+            team.getPlayers().remove(player.get());
+            teamService.update(team);
+
+            player.get().setTeam(null);
+            personService.update(player.get());
+
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    private ResponseEntity removeCoach(Team team) {
+        team.getCoach().setTeam(null);
+        personService.update(team.getCoach());
+
+        team.setCoach(null);
+        teamService.update(team);
+
+
+        return ResponseEntity.ok().build();
+    }
+
 
 }
