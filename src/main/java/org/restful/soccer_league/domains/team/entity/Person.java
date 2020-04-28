@@ -24,10 +24,8 @@ public abstract class Person implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotBlank
     private String name;
 
-    @NotBlank
     private String address;
 
 }

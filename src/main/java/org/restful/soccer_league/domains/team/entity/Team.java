@@ -1,9 +1,9 @@
 package org.restful.soccer_league.domains.team.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -13,15 +13,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Set;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString
 @Entity
 public class Team implements Serializable {
 
@@ -37,12 +34,11 @@ public class Team implements Serializable {
     @JoinColumn(name = "record_id", referencedColumnName = "id")
     private Record record;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "team")
     private Set<Player> players;
 
-    @OneToOne
-    @JoinColumn(name = "player_id", referencedColumnName = "id")
-    private Player captain;
+    private String captain;
 
     @OneToOne
     @JoinColumn(name = "coach_id", referencedColumnName = "id")

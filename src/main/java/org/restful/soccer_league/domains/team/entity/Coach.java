@@ -1,5 +1,6 @@
 package org.restful.soccer_league.domains.team.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,19 +25,19 @@ public class Coach extends Person {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
     private String accrLevel;
 
     private int experience;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "coach")
     private Team team;
 
-    public Coach(String name, String address, AccrLevel accrLevel, int experience) {
+    public Coach(String name, String address, String accrLevel, int experience) {
         setName(name);
         setAddress(address);
 
-        this.accrLevel = accrLevel.name();
+        this.accrLevel = accrLevel;
         this.experience = experience;
     }
 
