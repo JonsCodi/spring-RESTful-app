@@ -35,19 +35,15 @@ public class Game implements Serializable {
     private String location;
 
     @Column(name = "team_A")
-    @NotNull
     private String teamA;
 
     @Column(name = "team_B")
-    @NotNull
     private String teamB;
 
     @Column(name = "score_team_A")
-    @NotNull
     private int scoreTeamA;
 
     @Column(name = "score_team_B")
-    @NotNull
     private int scoreTeamB;
 
 }

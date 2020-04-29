@@ -1,6 +1,7 @@
 package org.restful.soccer_league.domains.team.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.restful.soccer_league.domains.league.entity.SoccerLeague;
 import org.restful.soccer_league.domains.team.entity.Coach;
 import org.restful.soccer_league.domains.team.entity.Person;
 import org.restful.soccer_league.domains.team.entity.Player;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -66,6 +68,13 @@ public class TeamServiceImpl implements ITeamService {
         }else {
             return addCoach(team, (Coach) person);
         }
+    }
+
+    @Override
+    public void addTeamsIntoLeague(Set<Team> teams, SoccerLeague soccerLeague) {
+        teams.forEach(team -> team.getSoccerLeagues().add(soccerLeague));
+
+        teamRepository.saveAll(teams);
     }
 
     private Person addCoach(Team team, Coach person) {

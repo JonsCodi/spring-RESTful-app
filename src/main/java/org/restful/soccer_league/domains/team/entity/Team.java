@@ -4,16 +4,20 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.restful.soccer_league.domains.league.entity.SoccerLeague;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -36,12 +40,16 @@ public class Team implements Serializable {
 
     @JsonIgnore
     @OneToMany(mappedBy = "team")
-    private Set<Player> players;
+    private Set<Player> players = new HashSet<>();
 
     private String captain;
 
     @OneToOne
     @JoinColumn(name = "coach_id", referencedColumnName = "id")
     private Coach coach;
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "teams")
+    private Set<SoccerLeague> soccerLeagues = new HashSet<>();
 
 }

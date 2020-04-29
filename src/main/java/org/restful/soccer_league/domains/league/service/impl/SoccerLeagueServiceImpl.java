@@ -15,19 +15,19 @@ public class SoccerLeagueServiceImpl implements ISoccerLeagueService {
     private final ISoccerRepository soccerRepository;
 
     @Override
-    public void create(SoccerLeague soccerLeague) {
+    public SoccerLeague create(SoccerLeague soccerLeague) {
         Optional<SoccerLeague> soccerLeagueAlreadyExist = soccerRepository.findByName(soccerLeague.getName());
 
-        if(soccerLeagueAlreadyExist.isPresent()) {
+        if (soccerLeagueAlreadyExist.isPresent()) {
             throw new RuntimeException("Duplicate Exception TODO:");
         }
 
-        soccerRepository.save(soccerLeague);
+        return soccerRepository.save(soccerLeague);
     }
 
     @Override
-    public void update(SoccerLeague soccerLeague) {
-        soccerRepository.save(soccerLeague);
+    public SoccerLeague update(SoccerLeague soccerLeague) {
+        return soccerRepository.save(soccerLeague);
     }
 
     @Override
