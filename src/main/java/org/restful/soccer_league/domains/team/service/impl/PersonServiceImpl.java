@@ -5,9 +5,12 @@ import org.restful.soccer_league.domains.team.entity.Coach;
 import org.restful.soccer_league.domains.team.entity.Person;
 import org.restful.soccer_league.domains.team.entity.Player;
 import org.restful.soccer_league.domains.team.repository.ICoachRepository;
+import org.restful.soccer_league.domains.team.repository.IPersonRepository;
 import org.restful.soccer_league.domains.team.repository.IPlayerRepository;
 import org.restful.soccer_league.domains.team.service.IPersonService;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -15,6 +18,7 @@ public class PersonServiceImpl implements IPersonService {
 
     private final ICoachRepository coachRepository;
     private final IPlayerRepository playerRepository;
+    private final IPersonRepository personBaseRepository;
 
     @Override
     public Person createOrUpdate(Person person) {
@@ -32,17 +36,24 @@ public class PersonServiceImpl implements IPersonService {
 
     @Override
     public void delete(Person person) {
-
+        personBaseRepository.delete(person);
     }
 
     @Override
     public void deleteById(long id) {
-
+        personBaseRepository.deleteById(id);
     }
 
     @Override
     public Person findByName(String name) {
-        return null;
+        return personBaseRepository.findByName(name).orElseThrow(
+                () -> new RuntimeException("Not Found!! TODO:")
+        );
+    }
+
+    @Override
+    public List<Person> findAll() {
+        return (List<Person>) personBaseRepository.findAll();
     }
 
 

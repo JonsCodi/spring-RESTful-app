@@ -57,7 +57,7 @@ public class PersonHierarchyController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Person>> get(@PathVariable("name") String name) {
+    public ResponseEntity<List<Person>> getAll(@PathVariable("name") String name) {
         Team team = teamService.findByName(name);
 
         List<Person> persons = new ArrayList<>(team.getPlayers());

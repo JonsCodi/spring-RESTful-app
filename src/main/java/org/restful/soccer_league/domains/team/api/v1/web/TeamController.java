@@ -39,7 +39,7 @@ public class TeamController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Team>> get() {
+    public ResponseEntity<List<Team>> getAll() {
         return ResponseEntity.ok(teamService.findAll());
     }
 

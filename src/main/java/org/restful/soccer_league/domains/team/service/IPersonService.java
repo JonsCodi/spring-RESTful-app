@@ -2,6 +2,8 @@ package org.restful.soccer_league.domains.team.service;
 
 import org.restful.soccer_league.domains.team.entity.Person;
 
+import java.util.List;
+
 public interface IPersonService<T extends Person> {
 
     T createOrUpdate(T person);
@@ -10,5 +12,7 @@ public interface IPersonService<T extends Person> {
     void deleteById(long id);
 
     T findByName(String name);
+
+    List<T> findAll();
 
 }
