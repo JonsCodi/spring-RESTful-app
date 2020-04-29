@@ -12,5 +12,6 @@ public interface ISoccerLeagueService {
     void deleteById(Long id);
 
     List<SoccerLeague> findAll();
+    SoccerLeague findByName(String name);
 
 }

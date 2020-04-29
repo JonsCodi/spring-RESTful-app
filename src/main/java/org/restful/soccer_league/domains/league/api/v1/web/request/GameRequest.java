@@ -7,21 +7,20 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.io.Serializable;
-import java.util.Set;
 
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class SoccerLeagueRequest implements Serializable {
+public class GameRequest implements Serializable {
 
-    private static final long serialVersionUID = -12001213212345531L;
+    private static final long serialVersionUID = -121111212345531L;
 
-    private String name;
-
-    private Set<String> teams;
-
-    private Set<GameRequest> games;
+    private String location;
+    private String teamA;
+    private String teamB;
+    private int scoreTeamA;
+    private int scoreTeamB;
 
 }

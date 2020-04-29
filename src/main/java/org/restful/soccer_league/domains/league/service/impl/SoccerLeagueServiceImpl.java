@@ -45,4 +45,11 @@ public class SoccerLeagueServiceImpl implements ISoccerLeagueService {
     public List<SoccerLeague> findAll() {
         return (List<SoccerLeague>) soccerRepository.findAll();
     }
+
+    @Override
+    public SoccerLeague findByName(String name) {
+        return soccerRepository.findByName(name).orElseThrow(
+                () -> new RuntimeException("Not Found!!! TODO:")
+        );
+    }
 }

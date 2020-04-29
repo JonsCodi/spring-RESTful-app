@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.restful.soccer_league.domains.team.entity.Team;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -52,7 +53,7 @@ public class SoccerLeague implements Serializable {
                             nullable = false, updatable = false)})
     private Set<Team> teams = new HashSet<>();
 
-    @OneToMany
+    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "soccer_league_id")
     private Set<Game> games = new HashSet<>();
 

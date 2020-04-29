@@ -19,6 +19,4 @@ public interface ITeamService {
     List<Team> findAll();
 
     Person addPerson(Team team, Person person);
-
-    void addTeamsIntoLeague(Set<Team> teams, SoccerLeague soccerLeague);
 }
