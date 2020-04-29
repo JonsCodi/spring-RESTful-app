@@ -6,6 +6,7 @@ import org.restful.soccer_league.domains.league.repository.ISoccerRepository;
 import org.restful.soccer_league.domains.league.service.ISoccerLeagueService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -38,5 +39,10 @@ public class SoccerLeagueServiceImpl implements ISoccerLeagueService {
     @Override
     public void deleteById(Long id) {
         soccerRepository.deleteById(id);
+    }
+
+    @Override
+    public List<SoccerLeague> findAll() {
+        return (List<SoccerLeague>) soccerRepository.findAll();
     }
 }

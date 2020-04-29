@@ -8,11 +8,13 @@ import org.restful.soccer_league.domains.team.entity.Team;
 import org.restful.soccer_league.domains.team.service.ITeamService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -42,6 +44,9 @@ public class SoccerLeagueController {
         return ResponseEntity.ok(soccerLeague);
     }
 
-    
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<SoccerLeague>> get() {
+        return ResponseEntity.ok(soccerLeagueService.findAll());
+    }
 
 }

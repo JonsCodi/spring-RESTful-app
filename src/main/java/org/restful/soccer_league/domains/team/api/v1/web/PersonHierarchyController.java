@@ -25,7 +25,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/teams/{name}/persons")
-public class PersonController {
+public class PersonHierarchyController {
 
     private final IPersonService<Person> personService;
     private final ITeamService teamService;
