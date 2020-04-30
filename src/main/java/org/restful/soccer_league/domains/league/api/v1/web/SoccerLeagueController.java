@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.restful.soccer_league.domains.league.api.v1.web.request.SoccerLeagueRequest;
 import org.restful.soccer_league.domains.league.entity.Game;
 import org.restful.soccer_league.domains.league.entity.SoccerLeague;
+import org.restful.soccer_league.domains.league.factory.GameFactory;
 import org.restful.soccer_league.domains.league.service.ISoccerLeagueService;
 import org.restful.soccer_league.domains.team.entity.Team;
 import org.restful.soccer_league.domains.team.service.ITeamService;
@@ -85,13 +86,7 @@ public class SoccerLeagueController {
     private void setGamesIfExist(final SoccerLeagueRequest soccerLeagueRequest, SoccerLeague soccerLeague) {
         if (Objects.nonNull(soccerLeagueRequest.getGames()) && !soccerLeagueRequest.getGames().isEmpty()) {
             Set<Game> games = soccerLeagueRequest.getGames().stream()
-                    .map(gameRequest -> Game.builder()
-                            .teamA(gameRequest.getTeamA())
-                            .teamB(gameRequest.getTeamB())
-                            .scoreTeamA(gameRequest.getScoreTeamA())
-                            .scoreTeamB(gameRequest.getScoreTeamB())
-                            .location(gameRequest.getLocation())
-                            .build())
+                    .map(GameFactory::create)
                     .collect(Collectors.toSet());
 
             soccerLeague.setGames(games);

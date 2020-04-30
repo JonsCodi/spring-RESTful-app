@@ -43,6 +43,16 @@ public class PersonHierarchyController {
         return ResponseEntity.ok(person);
     }
 
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Person>> getAll(@PathVariable("name") String name) {
+        Team team = teamService.findByName(name);
+
+        List<Person> persons = new ArrayList<>(team.getPlayers());
+        persons.add(team.getCoach());
+
+        return ResponseEntity.ok(persons);
+    }
+
     @GetMapping(path = "/{namePerson}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Person> get(@PathVariable("name") String name, @PathVariable("namePerson") String namePerson) {
         Team team = teamService.findByName(name);
@@ -54,16 +64,6 @@ public class PersonHierarchyController {
 
             return player.<ResponseEntity<Person>>map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
         }
-    }
-
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Person>> getAll(@PathVariable("name") String name) {
-        Team team = teamService.findByName(name);
-
-        List<Person> persons = new ArrayList<>(team.getPlayers());
-        persons.add(team.getCoach());
-
-        return ResponseEntity.ok(persons);
     }
 
     @PostMapping(path = "/{namePerson}")

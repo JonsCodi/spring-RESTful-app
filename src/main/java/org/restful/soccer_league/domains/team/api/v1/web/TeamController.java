@@ -33,14 +33,14 @@ public class TeamController {
         return ResponseEntity.ok(teamService.create(team));
     }
 
-    @GetMapping(path = "/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Team> get(@PathVariable("name") String name){
-        return ResponseEntity.ok(teamService.findByName(name));
-    }
-
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Team>> getAll() {
         return ResponseEntity.ok(teamService.findAll());
+    }
+
+    @GetMapping(path = "/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Team> get(@PathVariable("name") String name){
+        return ResponseEntity.ok(teamService.findByName(name));
     }
 
     @PostMapping(path = "/{name}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

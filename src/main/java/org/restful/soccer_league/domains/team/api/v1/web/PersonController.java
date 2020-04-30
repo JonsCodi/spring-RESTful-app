@@ -3,8 +3,6 @@ package org.restful.soccer_league.domains.team.api.v1.web;
 import lombok.RequiredArgsConstructor;
 import org.restful.soccer_league.domains.team.api.v1.web.request.BasePersonRequest;
 import org.restful.soccer_league.domains.team.entity.Person;
-import org.restful.soccer_league.domains.team.entity.Player;
-import org.restful.soccer_league.domains.team.entity.Team;
 import org.restful.soccer_league.domains.team.factory.PersonFactory;
 import org.restful.soccer_league.domains.team.service.IPersonService;
 import org.springframework.http.MediaType;
@@ -16,10 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -37,22 +32,14 @@ public class PersonController {
         return ResponseEntity.ok(person);
     }
 
-    @GetMapping(path = "/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Person> get(@PathVariable("name") String name) {
-        return ResponseEntity.ok(personService.findByName(name));
-    }
-
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Person>> getAll() {
         return ResponseEntity.ok(personService.findAll());
     }
 
-    @PostMapping(path = "/{name}")
-    public ResponseEntity delete(@PathVariable("name") String name) {
-        Person person = personService.findByName(name);
-        personService.delete(person);
-
-        return ResponseEntity.ok().build();
+    @GetMapping(path = "/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Person> get(@PathVariable("name") String name) {
+        return ResponseEntity.ok(personService.findByName(name));
     }
 
     @PostMapping(path = "/{name}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -63,6 +50,14 @@ public class PersonController {
         personUpdated.setId(person.getId());
 
         return ResponseEntity.ok(personService.update(personUpdated));
+    }
+
+    @PostMapping(path = "/{name}")
+    public ResponseEntity delete(@PathVariable("name") String name) {
+        Person person = personService.findByName(name);
+        personService.delete(person);
+
+        return ResponseEntity.ok().build();
     }
 
 }
