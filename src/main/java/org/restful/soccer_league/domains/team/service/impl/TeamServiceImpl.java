@@ -76,13 +76,12 @@ public class TeamServiceImpl implements ITeamService {
     }
 
     private void addCoach(Team team, Coach person) {
-        Coach coach = person;
-        coach.setTeam(team);
-        team.setCoach(coach);
+        person.setTeam(team);
+        team.setCoach(person);
 
         update(team);
 
-        coachRepository.save(coach);
+        coachRepository.save(person);
     }
 
     private void addPlayer(Team team, Player person) {
