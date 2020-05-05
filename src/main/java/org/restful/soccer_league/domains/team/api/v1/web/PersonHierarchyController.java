@@ -10,42 +10,47 @@ import org.restful.soccer_league.domains.team.service.IPersonService;
 import org.restful.soccer_league.domains.team.service.ITeamService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/teams/{name}/persons")
+@RequestMapping("/teams/{idTeam}/persons")
 public class PersonHierarchyController {
 
     private final IPersonService<Person> personService;
     private final ITeamService teamService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Person> create(@PathVariable("name") String name, @RequestBody BasePersonRequest basePersonRequest) {
-        Team team = teamService.findByName(name);
+    public ResponseEntity<Person> create(@PathVariable("idTeam") Long idTeam, @RequestBody BasePersonRequest basePersonRequest) {
+        Team team = teamService.findById(idTeam);
 
-        Person person = PersonFactory.createPerson(basePersonRequest);
+        Person person = personService.createOrUpdate(PersonFactory.createPerson(basePersonRequest));
 
-        person = personService.createOrUpdate(person);
+        teamService.addPerson(team, person);
 
-        person = teamService.addPerson(team, person);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(team.getId())
+                .toUri();
 
-        return ResponseEntity.ok(person);
+        return ResponseEntity.created(location).build();
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Person>> getAll(@PathVariable("name") String name) {
-        Team team = teamService.findByName(name);
+    public ResponseEntity<List<Person>> getAll(@PathVariable("idTeam") Long idTeam) {
+        Team team = teamService.findById(idTeam);
 
         List<Person> persons = new ArrayList<>(team.getPlayers());
         persons.add(team.getCoach());
@@ -53,60 +58,31 @@ public class PersonHierarchyController {
         return ResponseEntity.ok(persons);
     }
 
-    @GetMapping(path = "/{namePerson}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Person> get(@PathVariable("name") String name, @PathVariable("namePerson") String namePerson) {
-        Team team = teamService.findByName(name);
+    @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Person> get(@PathVariable("idTeam") Long idTeam, @PathVariable("id") Long id) {
+        Team team = teamService.findById(idTeam);
 
-        if (Objects.nonNull(team.getCoach()) && team.getCoach().getName().equals(namePerson)) {
+        if(team.getCoach().getId().equals(id)){
             return ResponseEntity.ok(team.getCoach());
-        } else {
-            Optional<Player> player = team.getPlayers().stream().filter(playerFromDB -> playerFromDB.getName().equals(namePerson)).findAny();
-
-            return player.<ResponseEntity<Person>>map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-        }
-    }
-
-    @PostMapping(path = "/{namePerson}")
-    public ResponseEntity remove(@PathVariable("name") String name, @PathVariable("namePerson") String namePerson) {
-        Team team = teamService.findByName(name);
-
-        if (Objects.nonNull(team.getCoach()) && team.getCoach().getName().equals(namePerson)) {
-            return removeCoach(team);
-        } else {
-            return removePlayer(namePerson, team);
         }
 
-    }
+        Optional<Player> person = team.getPlayers().stream().filter(player -> player.getId().equals(id)).findAny();
 
-    private ResponseEntity removePlayer(String namePerson, Team team) {
-
-        Optional<Player> player = team.getPlayers().stream()
-                .filter(playerFromDB -> playerFromDB.getName().equals(namePerson))
-                .findAny();
-
-        if (player.isPresent()) {
-            team.getPlayers().remove(player.get());
-            teamService.update(team);
-
-            player.get().setTeam(null);
-            personService.update(player.get());
-
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.notFound().build();
+        if(person.isPresent()){
+            return ResponseEntity.ok(person.get());
         }
+
+        return ResponseEntity.notFound().build();
     }
 
-    private ResponseEntity removeCoach(Team team) {
-        team.getCoach().setTeam(null);
-        personService.update(team.getCoach());
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity remove(@PathVariable("idTeam") Long idTeam, @PathVariable("id") Long id) {
+        Team team = teamService.findById(idTeam);
+        Person person = personService.findById(id);
 
-        team.setCoach(null);
-        teamService.update(team);
-
+        teamService.removePerson(team, person);
 
         return ResponseEntity.ok().build();
     }
-
 
 }

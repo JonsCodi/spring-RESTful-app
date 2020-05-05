@@ -52,6 +52,13 @@ public class PersonServiceImpl implements IPersonService {
     }
 
     @Override
+    public Person findById(Long id) {
+        return personBaseRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("Not Found!! TODO:")
+        );
+    }
+
+    @Override
     public List<Person> findAll() {
         return (List<Person>) personBaseRepository.findAll();
     }

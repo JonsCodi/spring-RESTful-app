@@ -9,6 +9,7 @@ import org.restful.soccer_league.domains.team.repository.ICoachRepository;
 import org.restful.soccer_league.domains.team.repository.IPlayerRepository;
 import org.restful.soccer_league.domains.team.repository.ITeamRepository;
 import org.restful.soccer_league.domains.team.service.ITeamService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -66,25 +67,25 @@ public class TeamServiceImpl implements ITeamService {
     }
 
     @Override
-    public Person addPerson(Team team, Person person) {
+    public void addPerson(Team team, Person person) {
         if(person instanceof Player) {
-            return addPlayer(team, (Player) person);
+            addPlayer(team, (Player) person);
         }else {
-            return addCoach(team, (Coach) person);
+            addCoach(team, (Coach) person);
         }
     }
 
-    private Person addCoach(Team team, Coach person) {
+    private void addCoach(Team team, Coach person) {
         Coach coach = person;
         coach.setTeam(team);
         team.setCoach(coach);
 
         update(team);
 
-        return coachRepository.save(coach);
+        coachRepository.save(coach);
     }
 
-    private Person addPlayer(Team team, Player person) {
+    private void addPlayer(Team team, Player person) {
         team.getPlayers().add(person);
         person.setTeam(team);
 
@@ -92,7 +93,7 @@ public class TeamServiceImpl implements ITeamService {
 
         update(team);
 
-        return playerRepository.save(person);
+        playerRepository.save(person);
     }
 
     private void updateCaptain(Team team, Player person) {
@@ -106,6 +107,39 @@ public class TeamServiceImpl implements ITeamService {
 
             team.setCaptain(person.getName());
         }
+    }
+
+    @Override
+    public void removePerson(Team team, Person person) {
+        if(person instanceof Player) {
+            removePlayer(person.getId(), team);
+        }else {
+            removeCoach(team);
+        }
+    }
+
+    private void removePlayer(Long id, Team team) {
+        Optional<Player> player = team.getPlayers().stream()
+                .filter(playerFromDB -> playerFromDB.getId().equals(id))
+                .findAny();
+
+        if (player.isPresent()) {
+            team.getPlayers().remove(player.get());
+            update(team);
+
+            player.get().setTeam(null);
+            playerRepository.save(player.get());
+        } else {
+            throw new RuntimeException("Not Found!! TODO: Tentou deletar um Jogador de outro time.. permissão negada. NOT ACCEPTED!!!");
+        }
+    }
+
+    private void removeCoach(Team team) {
+        team.getCoach().setTeam(null);
+        coachRepository.save(team.getCoach());
+
+        team.setCoach(null);
+        update(team);
     }
 
 }

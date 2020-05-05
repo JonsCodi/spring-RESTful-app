@@ -12,6 +12,7 @@ public interface IPersonService<T extends Person> {
     void deleteById(long id);
 
     T findByName(String name);
+    T findById(Long id);
 
     List<T> findAll();
 

@@ -17,5 +17,7 @@ public interface ITeamService {
 
     List<Team> findAll();
 
-    Person addPerson(Team team, Person person);
+    void addPerson(Team team, Person person);
+    void removePerson(Team team, Person person);
+
 }
