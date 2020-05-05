@@ -1,7 +1,6 @@
 package org.restful.soccer_league.domains.team.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.restful.soccer_league.domains.league.entity.SoccerLeague;
 import org.restful.soccer_league.domains.team.entity.Coach;
 import org.restful.soccer_league.domains.team.entity.Person;
 import org.restful.soccer_league.domains.team.entity.Player;
@@ -13,9 +12,7 @@ import org.restful.soccer_league.domains.team.service.ITeamService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +46,12 @@ public class TeamServiceImpl implements ITeamService {
     @Override
     public void deleteById(long id) {
         teamRepository.deleteById(id);
+    }
+
+    @Override
+    public Team findById(Long id) {
+        return teamRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("Not Found!!! TODO:"));
     }
 
     @Override
