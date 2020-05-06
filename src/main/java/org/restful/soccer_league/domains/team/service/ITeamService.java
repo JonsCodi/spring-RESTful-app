@@ -8,7 +8,7 @@ import java.util.List;
 public interface ITeamService {
 
     Team create(Team team);
-    Team update(Team team);
+    void update(Team team);
     void delete(Team team);
     void deleteById(long id);
 

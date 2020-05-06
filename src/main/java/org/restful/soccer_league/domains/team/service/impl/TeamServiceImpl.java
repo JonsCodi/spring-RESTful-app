@@ -9,7 +9,6 @@ import org.restful.soccer_league.domains.team.repository.ICoachRepository;
 import org.restful.soccer_league.domains.team.repository.IPlayerRepository;
 import org.restful.soccer_league.domains.team.repository.ITeamRepository;
 import org.restful.soccer_league.domains.team.service.ITeamService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,8 +34,8 @@ public class TeamServiceImpl implements ITeamService {
     }
 
     @Override
-    public Team update(Team team) {
-        return teamRepository.save(team);
+    public void update(Team team) {
+        teamRepository.save(team);
     }
 
     @Override

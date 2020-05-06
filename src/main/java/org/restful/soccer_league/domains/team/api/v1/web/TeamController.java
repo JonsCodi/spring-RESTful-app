@@ -1,14 +1,13 @@
 package org.restful.soccer_league.domains.team.api.v1.web;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.mergepatch.JsonMergePatch;
 import lombok.RequiredArgsConstructor;
 import org.restful.soccer_league.domains.team.api.v1.web.request.TeamCreateRequest;
 import org.restful.soccer_league.domains.team.entity.Team;
 import org.restful.soccer_league.domains.team.factory.TeamFactory;
 import org.restful.soccer_league.domains.team.service.ITeamService;
 import org.restful.soccer_league.domains.utils.components.PatchHelperComponent;
-import org.restful.soccer_league.domains.utils.constants.CustomHttpHeaders;
 import org.restful.soccer_league.domains.utils.constants.PatchMediaType;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -42,8 +41,7 @@ public class TeamController {
                 .buildAndExpand(team.getId())
                 .toUri();
 
-        return ResponseEntity.created(location)
-                .build();
+        return ResponseEntity.created(location).build();
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -60,12 +58,22 @@ public class TeamController {
     public ResponseEntity update(@PathVariable("id") Long id, @RequestBody JsonPatch jsonPatch) {
         Team team = teamService.findById(id);
         Team teamPatched = patchHelperComponent.applyPatch(jsonPatch, team);
-        team = teamService.update(teamPatched);
 
-        return ResponseEntity.noContent()
-                .build();
+        teamService.update(teamPatched);
 
+        return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping(path = "/{id}", produces = PatchMediaType.APPLICATION_MERGE_PATCH_VALUE)
+    public ResponseEntity update(@PathVariable("id") Long id, @RequestBody JsonMergePatch jsonMergePatch){
+        Team team = teamService.findById(id);
+        Team teamPatched = patchHelperComponent.applyMergePatch(jsonMergePatch, team);
+
+        teamService.update(teamPatched);
+
+        return ResponseEntity.noContent().build();
+    }
+
     @DeleteMapping(path = "/{id}")
     public ResponseEntity delete(@PathVariable("id") Long id) {
         teamService.deleteById(id);
