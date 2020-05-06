@@ -23,7 +23,7 @@ public class PatchHelperComponent {
         } catch (JsonPatchException | JsonProcessingException e) {
             e.printStackTrace();
 
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
     }
 

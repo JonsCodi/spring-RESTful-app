@@ -1,6 +1,7 @@
 package org.restful.soccer_league.domains.league.api.v1.web;
 
 import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.mergepatch.JsonMergePatch;
 import lombok.RequiredArgsConstructor;
 import org.restful.soccer_league.domains.league.api.v1.web.request.SoccerLeagueRequest;
 import org.restful.soccer_league.domains.league.entity.Game;
@@ -45,8 +46,7 @@ public class SoccerLeagueController {
                 .buildAndExpand(soccerLeague.getId())
                 .toUri();
 
-        return ResponseEntity.created(location)
-                .build();
+        return ResponseEntity.created(location).build();
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -60,15 +60,23 @@ public class SoccerLeagueController {
     }
 
     @PatchMapping(path = "/{id}", consumes = PatchMediaType.APPLICATION_JSON_PATCH_VALUE)
-    public ResponseEntity<SoccerLeague> update(@PathVariable("id") Long id, @RequestBody JsonPatch jsonPatch) {
+    public ResponseEntity update(@PathVariable("id") Long id, @RequestBody JsonPatch jsonPatch) {
         SoccerLeague soccerLeague = soccerLeagueService.findById(id);
-
         SoccerLeague soccerLeaguePatched = patchHelperComponent.applyPatch(jsonPatch, soccerLeague);
 
         soccerLeagueService.update(soccerLeaguePatched);
 
-        return ResponseEntity.noContent()
-                .build();
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping(path = "/{id}", consumes = PatchMediaType.APPLICATION_MERGE_PATCH_VALUE)
+    public ResponseEntity update(@PathVariable("id") Long id, @RequestBody JsonMergePatch jsonMergePatch) {
+        SoccerLeague soccerLeague = soccerLeagueService.findById(id);
+        SoccerLeague soccerLeagueMerged = patchHelperComponent.applyMergePatch(jsonMergePatch, soccerLeague);
+
+        soccerLeagueService.update(soccerLeagueMerged);
+
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping(path = "/{id}")
