@@ -8,14 +8,11 @@ import com.github.fge.jsonpatch.JsonPatchException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import javax.validation.Validator;
-
 @Component
 @RequiredArgsConstructor
 public class PatchHelperComponent {
 
     private final ObjectMapper mapper;
-    private final Validator validator;
 
     public <T> T applyPatch(JsonPatch patch, T objectTarget) {
         JsonNode jsonNode = mapper.convertValue(objectTarget, JsonNode.class);
