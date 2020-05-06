@@ -6,12 +6,6 @@ import org.restful.soccer_league.domains.league.entity.Game;
 public final class GameFactory {
 
     public static Game create(GameRequest gameRequest) {
-        return Game.builder()
-                .location(gameRequest.getLocation())
-                .teamA(gameRequest.getTeamA())
-                .teamB(gameRequest.getTeamB())
-                .scoreTeamA(gameRequest.getScoreTeamA())
-                .scoreTeamB(gameRequest.getScoreTeamB())
-                .build();
+        return new Game(gameRequest.getLocation(), gameRequest.getTeamA(), gameRequest.getTeamB());
     }
 }

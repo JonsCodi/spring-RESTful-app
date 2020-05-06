@@ -1,14 +1,17 @@
 package org.restful.soccer_league.domains.team.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.restful.soccer_league.domains.league.entity.SoccerLeague;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,6 +20,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -36,7 +40,7 @@ public class Team implements Serializable {
 
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "record_id", referencedColumnName = "id")
-    private Record record;
+    private Record record = new Record();
 
     @JsonIgnore
     @OneToMany(mappedBy = "team")
@@ -51,5 +55,23 @@ public class Team implements Serializable {
     @JsonIgnore
     @ManyToMany(mappedBy = "teams")
     private Set<SoccerLeague> soccerLeagues = new HashSet<>();
+
+    @CreationTimestamp
+    @Column(name = "created_at", columnDefinition = "DATETIME")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at", columnDefinition = "DATETIME")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime updatedAt;
+
+    @Column(name = "disabled_at", columnDefinition = "DATETIME")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime disabledAt;
+
+    public Team(String name) {
+        this.name = name;
+    }
 
 }

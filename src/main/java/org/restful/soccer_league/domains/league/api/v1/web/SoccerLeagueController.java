@@ -1,5 +1,6 @@
 package org.restful.soccer_league.domains.league.api.v1.web;
 
+import com.github.fge.jsonpatch.JsonPatch;
 import lombok.RequiredArgsConstructor;
 import org.restful.soccer_league.domains.league.api.v1.web.request.SoccerLeagueRequest;
 import org.restful.soccer_league.domains.league.entity.Game;
@@ -7,16 +8,21 @@ import org.restful.soccer_league.domains.league.entity.SoccerLeague;
 import org.restful.soccer_league.domains.league.factory.GameFactory;
 import org.restful.soccer_league.domains.league.service.ISoccerLeagueService;
 import org.restful.soccer_league.domains.team.entity.Team;
-import org.restful.soccer_league.domains.team.service.ITeamService;
+import org.restful.soccer_league.domains.utils.components.PatchHelperComponent;
+import org.restful.soccer_league.domains.utils.constants.PatchMediaType;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -28,18 +34,19 @@ import java.util.stream.Collectors;
 public class SoccerLeagueController {
 
     private final ISoccerLeagueService soccerLeagueService;
-    private final ITeamService teamService;
+    private final PatchHelperComponent patchHelperComponent;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SoccerLeague> create(@RequestBody SoccerLeagueRequest soccerLeagueRequest) {
-        SoccerLeague soccerLeague = createSoccerLeagueObject(soccerLeagueRequest);
+        SoccerLeague soccerLeague = soccerLeagueService.create(createSoccerLeagueObject(soccerLeagueRequest));
 
-        soccerLeague = soccerLeagueService.create(soccerLeague);
-        if(Objects.nonNull(soccerLeague.getTeams()) && !soccerLeague.getTeams().isEmpty()) {
-            soccerLeague.getTeams().forEach(teamService::update);
-        }
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(soccerLeague.getId())
+                .toUri();
 
-        return ResponseEntity.ok(soccerLeague);
+        return ResponseEntity.created(location)
+                .build();
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -47,35 +54,32 @@ public class SoccerLeagueController {
         return ResponseEntity.ok(soccerLeagueService.findAll());
     }
 
-    @GetMapping(path = "/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SoccerLeague> get(@PathVariable("name") String name) {
-        return ResponseEntity.ok(soccerLeagueService.findByName(name));
+    @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SoccerLeague> get(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(soccerLeagueService.findById(id));
     }
 
-    @PostMapping(path = "/{name}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SoccerLeague> update(@PathVariable("name") String name, @RequestBody SoccerLeagueRequest soccerLeagueRequest) {
-        SoccerLeague soccerLeague = soccerLeagueService.findByName(name);
+    @PatchMapping(path = "/{id}", consumes = PatchMediaType.APPLICATION_JSON_PATCH_VALUE)
+    public ResponseEntity<SoccerLeague> update(@PathVariable("id") Long id, @RequestBody JsonPatch jsonPatch) {
+        SoccerLeague soccerLeague = soccerLeagueService.findById(id);
 
-        SoccerLeague soccerLeagueForUpdate = createSoccerLeagueObject(soccerLeagueRequest);
+        SoccerLeague soccerLeaguePatched = patchHelperComponent.applyPatch(jsonPatch, soccerLeague);
 
-        soccerLeagueForUpdate.setId(soccerLeague.getId());
+        soccerLeagueService.update(soccerLeaguePatched);
 
-        return ResponseEntity.ok(soccerLeagueService.update(soccerLeagueForUpdate));
+        return ResponseEntity.noContent()
+                .build();
     }
 
-    @PostMapping(path = "/{name}")
-    public ResponseEntity delete(@PathVariable("name") String name) {
-        SoccerLeague soccerLeague = soccerLeagueService.findByName(name);
-
-        soccerLeagueService.delete(soccerLeague);
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity delete(@PathVariable("id") Long id) {
+        soccerLeagueService.deleteById(id);
 
         return ResponseEntity.ok().build();
     }
 
     private SoccerLeague createSoccerLeagueObject(SoccerLeagueRequest soccerLeagueRequest) {
-        SoccerLeague soccerLeague = SoccerLeague.builder()
-                .name(soccerLeagueRequest.getName())
-                .build();
+        SoccerLeague soccerLeague = new SoccerLeague(soccerLeagueRequest.getName());
 
         setTeamsIfExist(soccerLeagueRequest, soccerLeague);
         setGamesIfExist(soccerLeagueRequest, soccerLeague);
@@ -96,13 +100,7 @@ public class SoccerLeagueController {
     private void setTeamsIfExist(final SoccerLeagueRequest soccerLeagueRequest, SoccerLeague soccerLeague) {
         if (Objects.nonNull(soccerLeagueRequest.getTeams()) && !soccerLeagueRequest.getTeams().isEmpty()) {
             Set<Team> teams = soccerLeagueRequest.getTeams().stream()
-                    .map(team -> {
-                        Team teamFromRepository = teamService.findByName(team);
-
-                        teamFromRepository.getSoccerLeagues().add(soccerLeague);
-
-                        return teamFromRepository;
-                    })
+                    .map(Team::new)
                     .collect(Collectors.toSet());
 
             soccerLeague.setTeams(teams);

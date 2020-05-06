@@ -27,8 +27,8 @@ public class SoccerLeagueServiceImpl implements ISoccerLeagueService {
     }
 
     @Override
-    public SoccerLeague update(SoccerLeague soccerLeague) {
-        return soccerRepository.save(soccerLeague);
+    public void update(SoccerLeague soccerLeague) {
+        soccerRepository.save(soccerLeague);
     }
 
     @Override
@@ -52,4 +52,12 @@ public class SoccerLeagueServiceImpl implements ISoccerLeagueService {
                 () -> new RuntimeException("Not Found!!! TODO:")
         );
     }
+
+    @Override
+    public SoccerLeague findById(Long id) {
+        return soccerRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("Not Found!!! TODO:")
+        );
+    }
+
 }

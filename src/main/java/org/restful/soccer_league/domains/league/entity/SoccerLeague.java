@@ -1,16 +1,19 @@
 package org.restful.soccer_league.domains.league.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.restful.soccer_league.domains.team.entity.Team;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,19 +22,15 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-@ToString
 @Entity
+@NoArgsConstructor
 @Table(name = "soccer_league")
 public class SoccerLeague implements Serializable {
 
@@ -43,7 +42,7 @@ public class SoccerLeague implements Serializable {
 
     private String name;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(name = "leagues_teams",
             joinColumns = {
                     @JoinColumn(name = "soccer_league_id", referencedColumnName = "id",
@@ -56,5 +55,23 @@ public class SoccerLeague implements Serializable {
     @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "soccer_league_id")
     private Set<Game> games = new HashSet<>();
+
+    @CreationTimestamp
+    @Column(name = "created_at", columnDefinition = "DATETIME")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at", columnDefinition = "DATETIME")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime updatedAt;
+
+    @Column(name = "disabled_at", columnDefinition = "DATETIME")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime disabledAt;
+
+    public SoccerLeague(String name) {
+        this.name = name;
+    }
 
 }

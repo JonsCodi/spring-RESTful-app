@@ -45,7 +45,8 @@ public class PersonHierarchyController {
                 .buildAndExpand(team.getId())
                 .toUri();
 
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.created(location)
+                .build();
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)

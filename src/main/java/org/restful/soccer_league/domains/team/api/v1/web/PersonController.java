@@ -20,7 +20,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -35,7 +37,13 @@ public class PersonController {
     public ResponseEntity<Person> create(@RequestBody BasePersonRequest basePersonRequest) {
         Person person = personService.createOrUpdate(PersonFactory.createPerson(basePersonRequest));
 
-        return ResponseEntity.ok(person);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(person.getId())
+                .toUri();
+
+        return ResponseEntity.created(location)
+                .build();
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -55,7 +63,8 @@ public class PersonController {
         Person personPatched = update(patchDocument, person);
         personService.update(personPatched);
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent()
+                .build();
     }
 
     private Person update(JsonPatch patchDocument, Person person) {

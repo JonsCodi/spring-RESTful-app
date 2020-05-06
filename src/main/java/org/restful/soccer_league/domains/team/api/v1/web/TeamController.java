@@ -8,6 +8,7 @@ import org.restful.soccer_league.domains.team.entity.Team;
 import org.restful.soccer_league.domains.team.factory.TeamFactory;
 import org.restful.soccer_league.domains.team.service.ITeamService;
 import org.restful.soccer_league.domains.utils.components.PatchHelperComponent;
+import org.restful.soccer_league.domains.utils.constants.CustomHttpHeaders;
 import org.restful.soccer_league.domains.utils.constants.PatchMediaType;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,8 +33,6 @@ public class TeamController {
     private final ITeamService teamService;
     private final PatchHelperComponent patchHelperComponent;
 
-    private final ObjectMapper objectMapper;
-
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity create(@RequestBody TeamCreateRequest teamCreateRequest) {
         Team team = teamService.create(TeamFactory.createTeam(teamCreateRequest));
@@ -43,7 +42,8 @@ public class TeamController {
                 .buildAndExpand(team.getId())
                 .toUri();
 
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.created(location)
+                .build();
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -60,10 +60,10 @@ public class TeamController {
     public ResponseEntity update(@PathVariable("id") Long id, @RequestBody JsonPatch jsonPatch) {
         Team team = teamService.findById(id);
         Team teamPatched = patchHelperComponent.applyPatch(jsonPatch, team);
+        team = teamService.update(teamPatched);
 
-        teamService.update(teamPatched);
-
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent()
+                .build();
 
     }
     @DeleteMapping(path = "/{id}")
