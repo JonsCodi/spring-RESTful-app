@@ -7,7 +7,7 @@ import java.util.List;
 public interface IPersonService<T extends Person> {
 
     T createOrUpdate(T person);
-    T update(T person);
+    void update(T person);
     void delete(T person);
     void deleteById(long id);
 

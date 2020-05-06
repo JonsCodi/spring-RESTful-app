@@ -30,8 +30,8 @@ public class PersonServiceImpl implements IPersonService {
     }
 
     @Override
-    public Person update(Person person) {
-        return createOrUpdate(person);
+    public void update(Person person) {
+        createOrUpdate(person);
     }
 
     @Override
