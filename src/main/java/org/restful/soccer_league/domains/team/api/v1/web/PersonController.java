@@ -1,6 +1,7 @@
 package org.restful.soccer_league.domains.team.api.v1.web;
 
 import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.mergepatch.JsonMergePatch;
 import lombok.RequiredArgsConstructor;
 import org.restful.soccer_league.domains.team.api.v1.web.request.BasePersonRequest;
 import org.restful.soccer_league.domains.team.entity.Coach;
@@ -57,17 +58,34 @@ public class PersonController {
     }
 
     @PatchMapping(path = "/{id}", consumes = PatchMediaType.APPLICATION_JSON_PATCH_VALUE)
-    public ResponseEntity<Person> update(@PathVariable("id") Long id, @RequestBody JsonPatch patchDocument) {
+    public ResponseEntity update(@PathVariable("id") Long id, @RequestBody JsonPatch jsonPatch) {
         Person person = personService.findById(id);
+        Person personPatched = updateWithPatch(jsonPatch, person);
 
-        Person personPatched = update(patchDocument, person);
         personService.update(personPatched);
 
-        return ResponseEntity.noContent()
-                .build();
+        return ResponseEntity.noContent().build();
     }
 
-    private Person update(JsonPatch patchDocument, Person person) {
+    @PatchMapping(path = "/{id}", consumes = PatchMediaType.APPLICATION_MERGE_PATCH_VALUE)
+    public ResponseEntity update(@PathVariable("id") Long id, @RequestBody JsonMergePatch jsonMergePatch) {
+        Person person = personService.findById(id);
+        Person personMerged = updateWithMerge(jsonMergePatch, person);
+
+        personService.update(personMerged);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    private Person updateWithMerge(JsonMergePatch jsonMergePatch, Person person) {
+        if(person instanceof Player) {
+            return patchHelperComponent.applyMergePatch(jsonMergePatch, (Player) person);
+        } else {
+            return patchHelperComponent.applyMergePatch(jsonMergePatch, (Coach) person);
+        }
+    }
+
+    private Person updateWithPatch(JsonPatch patchDocument, Person person) {
         if (person instanceof Player) {
             return patchHelperComponent.applyPatch(patchDocument, (Player) person);
         } else {

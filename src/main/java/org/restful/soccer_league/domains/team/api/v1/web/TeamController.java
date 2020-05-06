@@ -67,9 +67,9 @@ public class TeamController {
     @PatchMapping(path = "/{id}", produces = PatchMediaType.APPLICATION_MERGE_PATCH_VALUE)
     public ResponseEntity update(@PathVariable("id") Long id, @RequestBody JsonMergePatch jsonMergePatch){
         Team team = teamService.findById(id);
-        Team teamPatched = patchHelperComponent.applyMergePatch(jsonMergePatch, team);
+        Team teamMerged = patchHelperComponent.applyMergePatch(jsonMergePatch, team);
 
-        teamService.update(teamPatched);
+        teamService.update(teamMerged);
 
         return ResponseEntity.noContent().build();
     }
