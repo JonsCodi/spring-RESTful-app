@@ -4,11 +4,9 @@ import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.mergepatch.JsonMergePatch;
 import lombok.RequiredArgsConstructor;
 import org.restful.soccer_league.domains.league.api.v1.web.request.SoccerLeagueRequest;
-import org.restful.soccer_league.domains.league.entity.Game;
 import org.restful.soccer_league.domains.league.entity.SoccerLeague;
-import org.restful.soccer_league.domains.league.factory.GameFactory;
+import org.restful.soccer_league.domains.league.factory.SoccerLeagueFactory;
 import org.restful.soccer_league.domains.league.service.ISoccerLeagueService;
-import org.restful.soccer_league.domains.team.entity.Team;
 import org.restful.soccer_league.domains.utils.components.PatchHelperComponent;
 import org.restful.soccer_league.domains.utils.constants.PatchMediaType;
 import org.springframework.http.MediaType;
@@ -25,9 +23,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -39,7 +34,7 @@ public class SoccerLeagueController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SoccerLeague> create(@RequestBody SoccerLeagueRequest soccerLeagueRequest) {
-        SoccerLeague soccerLeague = soccerLeagueService.create(createSoccerLeagueObject(soccerLeagueRequest));
+        SoccerLeague soccerLeague = soccerLeagueService.create(SoccerLeagueFactory.createSoccerLeagueObject(soccerLeagueRequest));
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -84,35 +79,6 @@ public class SoccerLeagueController {
         soccerLeagueService.deleteById(id);
 
         return ResponseEntity.ok().build();
-    }
-
-    private SoccerLeague createSoccerLeagueObject(SoccerLeagueRequest soccerLeagueRequest) {
-        SoccerLeague soccerLeague = new SoccerLeague(soccerLeagueRequest.getName());
-
-        setTeamsIfExist(soccerLeagueRequest, soccerLeague);
-        setGamesIfExist(soccerLeagueRequest, soccerLeague);
-
-        return soccerLeague;
-    }
-
-    private void setGamesIfExist(final SoccerLeagueRequest soccerLeagueRequest, SoccerLeague soccerLeague) {
-        if (Objects.nonNull(soccerLeagueRequest.getGames()) && !soccerLeagueRequest.getGames().isEmpty()) {
-            Set<Game> games = soccerLeagueRequest.getGames().stream()
-                    .map(GameFactory::create)
-                    .collect(Collectors.toSet());
-
-            soccerLeague.setGames(games);
-        }
-    }
-
-    private void setTeamsIfExist(final SoccerLeagueRequest soccerLeagueRequest, SoccerLeague soccerLeague) {
-        if (Objects.nonNull(soccerLeagueRequest.getTeams()) && !soccerLeagueRequest.getTeams().isEmpty()) {
-            Set<Team> teams = soccerLeagueRequest.getTeams().stream()
-                    .map(Team::new)
-                    .collect(Collectors.toSet());
-
-            soccerLeague.setTeams(teams);
-        }
     }
 
 }
