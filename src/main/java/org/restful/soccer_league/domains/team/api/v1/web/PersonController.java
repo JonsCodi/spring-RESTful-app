@@ -4,9 +4,7 @@ import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.mergepatch.JsonMergePatch;
 import lombok.RequiredArgsConstructor;
 import org.restful.soccer_league.domains.team.api.v1.web.request.BasePersonRequest;
-import org.restful.soccer_league.domains.team.entity.Coach;
 import org.restful.soccer_league.domains.team.entity.Person;
-import org.restful.soccer_league.domains.team.entity.Player;
 import org.restful.soccer_league.domains.team.factory.PersonFactory;
 import org.restful.soccer_league.domains.team.service.IPersonService;
 import org.restful.soccer_league.domains.utils.components.PatchHelperComponent;
@@ -43,8 +41,7 @@ public class PersonController {
                 .buildAndExpand(person.getId())
                 .toUri();
 
-        return ResponseEntity.created(location)
-                .build();
+        return ResponseEntity.created(location).build();
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -84,6 +81,5 @@ public class PersonController {
 
         return ResponseEntity.ok().build();
     }
-
 
 }
