@@ -60,7 +60,7 @@ public class PersonController {
     @PatchMapping(path = "/{id}", consumes = PatchMediaType.APPLICATION_JSON_PATCH_VALUE)
     public ResponseEntity update(@PathVariable("id") Long id, @RequestBody JsonPatch jsonPatch) {
         Person person = personService.findById(id);
-        Person personPatched = patchHelperComponent.applyPatch(jsonPatch, (Player) person);
+        Person personPatched = patchHelperComponent.applyPatch(jsonPatch, person);
 
         personService.update(personPatched);
 
