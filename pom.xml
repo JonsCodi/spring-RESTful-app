@@ -60,6 +60,7 @@
 			</exclusions>
 		</dependency>
 
+		<!-- Projeto para trabalhar com JSON PATCH -->
 		<dependency>
 			<groupId>com.github.java-json-tools</groupId>
 			<artifactId>json-patch</artifactId>
