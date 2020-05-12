@@ -61,7 +61,7 @@ public class SoccerLeagueController {
 
         soccerLeagueService.update(soccerLeaguePatched);
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
     @PatchMapping(path = "/{id}", consumes = PatchMediaType.APPLICATION_MERGE_PATCH_VALUE)
@@ -71,7 +71,7 @@ public class SoccerLeagueController {
 
         soccerLeagueService.update(soccerLeagueMerged);
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping(path = "/{id}")
