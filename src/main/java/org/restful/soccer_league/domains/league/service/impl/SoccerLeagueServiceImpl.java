@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.restful.soccer_league.domains.league.entity.SoccerLeague;
 import org.restful.soccer_league.domains.league.repository.ISoccerRepository;
 import org.restful.soccer_league.domains.league.service.ISoccerLeagueService;
+import org.restful.soccer_league.domains.utils.exceptions.ConflictException;
+import org.restful.soccer_league.domains.utils.exceptions.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,7 +22,7 @@ public class SoccerLeagueServiceImpl implements ISoccerLeagueService {
         Optional<SoccerLeague> soccerLeagueAlreadyExist = soccerRepository.findByName(soccerLeague.getName());
 
         if (soccerLeagueAlreadyExist.isPresent()) {
-            throw new RuntimeException("Duplicate Exception TODO:");
+            throw new ConflictException("Already exist a Resource with same value of this field.", "name");
         }
 
         return soccerRepository.save(soccerLeague);
@@ -49,14 +51,14 @@ public class SoccerLeagueServiceImpl implements ISoccerLeagueService {
     @Override
     public SoccerLeague findByName(String name) {
         return soccerRepository.findByName(name).orElseThrow(
-                () -> new RuntimeException("Not Found!!! TODO:")
+                () -> new ResourceNotFoundException("Resource not Found.")
         );
     }
 
     @Override
     public SoccerLeague findById(Long id) {
         return soccerRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Not Found!!! TODO:")
+                () -> new ResourceNotFoundException("Resource not Found.")
         );
     }
 

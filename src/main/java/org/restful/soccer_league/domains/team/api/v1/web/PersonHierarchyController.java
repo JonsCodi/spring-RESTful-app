@@ -22,6 +22,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -42,7 +43,7 @@ public class PersonHierarchyController {
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(team.getId())
+                .buildAndExpand(person.getId())
                 .toUri();
 
         return ResponseEntity.created(location)
@@ -63,7 +64,7 @@ public class PersonHierarchyController {
     public ResponseEntity<Person> get(@PathVariable("idTeam") Long idTeam, @PathVariable("id") Long id) {
         Team team = teamService.findById(idTeam);
 
-        if(team.getCoach().getId().equals(id)){
+        if(Objects.nonNull(team.getCoach()) && team.getCoach().getId().equals(id)){
             return ResponseEntity.ok(team.getCoach());
         }
 

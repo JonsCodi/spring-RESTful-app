@@ -9,7 +9,12 @@ import org.restful.soccer_league.domains.team.repository.ICoachRepository;
 import org.restful.soccer_league.domains.team.repository.IPlayerRepository;
 import org.restful.soccer_league.domains.team.repository.ITeamRepository;
 import org.restful.soccer_league.domains.team.service.ITeamService;
+import org.restful.soccer_league.domains.utils.exceptions.ConflictException;
+import org.restful.soccer_league.domains.utils.exceptions.ForbiddenException;
+import org.restful.soccer_league.domains.utils.exceptions.ResourceNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +22,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class TeamServiceImpl implements ITeamService {
-    
+
     private final ITeamRepository teamRepository;
     private final IPlayerRepository playerRepository;
     private final ICoachRepository coachRepository;
@@ -26,8 +31,8 @@ public class TeamServiceImpl implements ITeamService {
     public Team create(Team team) {
         Optional<Team> teamAlreadyExist = teamRepository.findByName(team.getName());
 
-        if(teamAlreadyExist.isPresent()) {
-            throw new RuntimeException("Duplicate Exception TODO:");
+        if (teamAlreadyExist.isPresent()) {
+            throw new ConflictException("Already exist a Resource with same value of this field.", "name");
         }
 
         return teamRepository.save(team);
@@ -51,13 +56,15 @@ public class TeamServiceImpl implements ITeamService {
     @Override
     public Team findById(Long id) {
         return teamRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Not Found!!! TODO:"));
+                () -> new ResourceNotFoundException("Resource not Found.")
+        );
     }
 
     @Override
     public Team findByName(String name) {
         return teamRepository.findByName(name).orElseThrow(
-                () -> new RuntimeException("Not Found!!! TODO:"));
+                () -> new ResourceNotFoundException("Resource not Found.")
+        );
     }
 
     @Override
@@ -67,9 +74,9 @@ public class TeamServiceImpl implements ITeamService {
 
     @Override
     public void addPerson(Team team, Person person) {
-        if(person instanceof Player) {
+        if (person instanceof Player) {
             addPlayer(team, (Player) person);
-        }else {
+        } else {
             addCoach(team, (Coach) person);
         }
     }
@@ -95,7 +102,7 @@ public class TeamServiceImpl implements ITeamService {
     }
 
     private void updateCaptain(Team team, Player person) {
-        if(person.isCaptain()) {
+        if (person.isCaptain()) {
             team.getPlayers().stream().filter(player ->
                     !player.getName().equals(person.getName()) && player.isCaptain()).findAny().ifPresent(captain -> {
                 captain.setCaptain(false);
@@ -109,26 +116,32 @@ public class TeamServiceImpl implements ITeamService {
 
     @Override
     public void removePerson(Team team, Person person) {
-        if(person instanceof Player) {
+        if (person instanceof Player) {
             removePlayer(person.getId(), team);
-        }else {
+        } else {
             removeCoach(team);
         }
     }
 
     private void removePlayer(Long id, Team team) {
-        Optional<Player> player = team.getPlayers().stream()
+        Optional<Player> playerOptional = team.getPlayers().stream()
                 .filter(playerFromDB -> playerFromDB.getId().equals(id))
                 .findAny();
 
-        if (player.isPresent()) {
-            team.getPlayers().remove(player.get());
+        if (playerOptional.isPresent()) {
+            Player player = playerOptional.get();
+
+            team.getPlayers().remove(player);
+            if (player.isCaptain()) {
+                team.setCaptain(null);
+            }
+
             update(team);
 
-            player.get().setTeam(null);
-            playerRepository.save(player.get());
+            player.setTeam(null);
+            playerRepository.save(player);
         } else {
-            throw new RuntimeException("Not Found!! TODO: Tentou deletar um Jogador de outro time.. permissão negada. NOT ACCEPTED!!!");
+            throw new ForbiddenException("Invalid Operation.");
         }
     }
 

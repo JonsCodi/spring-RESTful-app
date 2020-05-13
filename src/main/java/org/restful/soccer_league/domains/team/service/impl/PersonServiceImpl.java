@@ -8,7 +8,9 @@ import org.restful.soccer_league.domains.team.repository.ICoachRepository;
 import org.restful.soccer_league.domains.team.repository.IPersonRepository;
 import org.restful.soccer_league.domains.team.repository.IPlayerRepository;
 import org.restful.soccer_league.domains.team.service.IPersonService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -47,14 +49,14 @@ public class PersonServiceImpl implements IPersonService {
     @Override
     public Person findByName(String name) {
         return personBaseRepository.findByName(name).orElseThrow(
-                () -> new RuntimeException("Not Found!! TODO:")
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Person Not Found.")
         );
     }
 
     @Override
     public Person findById(Long id) {
         return personBaseRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Not Found!! TODO:")
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Person Not Found.")
         );
     }
 
