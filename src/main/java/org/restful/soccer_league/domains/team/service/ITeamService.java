@@ -15,6 +15,7 @@ public interface ITeamService {
     Team findById(Long id);
     Team findByName(String name);
 
+
     List<Team> findAll();
 
     void addPerson(Team team, Person person);

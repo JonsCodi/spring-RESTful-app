@@ -8,6 +8,7 @@ import org.restful.soccer_league.domains.team.entity.Team;
 import org.restful.soccer_league.domains.team.factory.PersonFactory;
 import org.restful.soccer_league.domains.team.service.IPersonService;
 import org.restful.soccer_league.domains.team.service.ITeamService;
+import org.restful.soccer_league.domains.utils.exceptions.ResourceNotFoundException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +36,7 @@ public class PersonHierarchyController {
     private final ITeamService teamService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Person> create(@PathVariable("idTeam") Long idTeam, @RequestBody BasePersonRequest basePersonRequest) {
+    public ResponseEntity<Person> create(@PathVariable("idTeam") Long idTeam, @Valid  @RequestBody BasePersonRequest basePersonRequest) {
         Team team = teamService.findById(idTeam);
 
         Person person = personService.createOrUpdate(PersonFactory.createPerson(basePersonRequest));
@@ -55,7 +57,9 @@ public class PersonHierarchyController {
         Team team = teamService.findById(idTeam);
 
         List<Person> persons = new ArrayList<>(team.getPlayers());
-        persons.add(team.getCoach());
+        if(Objects.nonNull(team.getCoach())){
+            persons.add(team.getCoach());
+        }
 
         return ResponseEntity.ok(persons);
     }
@@ -74,7 +78,7 @@ public class PersonHierarchyController {
             return ResponseEntity.ok(person.get());
         }
 
-        return ResponseEntity.notFound().build();
+        throw new ResourceNotFoundException("Resource not found", "Teams.Persons");
     }
 
     @DeleteMapping(path = "/{id}")

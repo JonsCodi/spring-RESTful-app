@@ -21,8 +21,6 @@ public class PatchHelperComponent {
 
             return (T) mapper.treeToValue(patched, objectTarget.getClass());
         } catch (JsonPatchException | JsonProcessingException e) {
-            e.printStackTrace();
-
             throw new RuntimeException(e);
         }
     }
@@ -33,8 +31,6 @@ public class PatchHelperComponent {
 
             return (T) mapper.treeToValue(mergeNode, objectTarget.getClass());
         } catch (JsonPatchException | JsonProcessingException e) {
-            e.printStackTrace();
-
             throw new RuntimeException(e);
         }
     }

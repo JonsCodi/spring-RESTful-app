@@ -7,6 +7,8 @@ import lombok.Setter;
 import lombok.ToString;
 import org.restful.soccer_league.domains.team.enums.AccrLevel;
 
+import javax.validation.constraints.NotNull;
+
 @Getter
 @Setter
 @ToString
@@ -14,8 +16,10 @@ import org.restful.soccer_league.domains.team.enums.AccrLevel;
 @AllArgsConstructor
 public class CoachCreateRequest extends BasePersonRequest {
 
+    @NotNull
     private AccrLevel accrLevel;
 
+    @NotNull
     private int experience;
 
 }

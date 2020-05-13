@@ -7,6 +7,8 @@ import lombok.Setter;
 import lombok.ToString;
 import org.restful.soccer_league.domains.team.enums.Position;
 
+import javax.validation.constraints.NotNull;
+
 @Getter
 @Setter
 @ToString
@@ -14,10 +16,13 @@ import org.restful.soccer_league.domains.team.enums.Position;
 @AllArgsConstructor
 public class PlayerCreateRequest extends BasePersonRequest {
 
+    @NotNull
     public int number;
 
+    @NotNull
     public Position position;
 
+    @NotNull
     public boolean isCaptain;
 
 }

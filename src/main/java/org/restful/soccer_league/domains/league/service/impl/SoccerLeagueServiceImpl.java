@@ -17,12 +17,14 @@ public class SoccerLeagueServiceImpl implements ISoccerLeagueService {
 
     private final ISoccerRepository soccerRepository;
 
+    private final static String SOCCER_LEAGUES = "Soccer-Leagues";
+
     @Override
     public SoccerLeague create(SoccerLeague soccerLeague) {
         Optional<SoccerLeague> soccerLeagueAlreadyExist = soccerRepository.findByName(soccerLeague.getName());
 
         if (soccerLeagueAlreadyExist.isPresent()) {
-            throw new ConflictException("Already exist a Resource with same value of this field.", "name");
+            throw new ConflictException("Already exist a Resource with same value of this field.", "name", SOCCER_LEAGUES);
         }
 
         return soccerRepository.save(soccerLeague);
@@ -51,14 +53,14 @@ public class SoccerLeagueServiceImpl implements ISoccerLeagueService {
     @Override
     public SoccerLeague findByName(String name) {
         return soccerRepository.findByName(name).orElseThrow(
-                () -> new ResourceNotFoundException("Resource not Found.")
+                () -> new ResourceNotFoundException("Resource not Found.", SOCCER_LEAGUES)
         );
     }
 
     @Override
     public SoccerLeague findById(Long id) {
         return soccerRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Resource not Found.")
+                () -> new ResourceNotFoundException("Resource not Found.", SOCCER_LEAGUES)
         );
     }
 

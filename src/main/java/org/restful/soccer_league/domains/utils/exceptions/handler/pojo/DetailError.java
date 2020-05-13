@@ -9,6 +9,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class DetailError implements Serializable {
 
+    private String resource;
     private String field;
     private String message;
     private String code;

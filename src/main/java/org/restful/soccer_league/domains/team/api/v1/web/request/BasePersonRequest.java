@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.restful.soccer_league.domains.team.enums.PersonType;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Getter
@@ -23,10 +25,13 @@ public class BasePersonRequest implements Serializable {
 
     private static final long serialVersionUID = -3213213212345531L;
 
+    @NotBlank
     private String name;
 
+    @NotBlank
     private String address;
 
+    @NotNull
     private PersonType personType;
 
 }

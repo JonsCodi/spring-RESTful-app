@@ -12,9 +12,7 @@ import org.restful.soccer_league.domains.team.service.ITeamService;
 import org.restful.soccer_league.domains.utils.exceptions.ConflictException;
 import org.restful.soccer_league.domains.utils.exceptions.ForbiddenException;
 import org.restful.soccer_league.domains.utils.exceptions.ResourceNotFoundException;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,12 +25,14 @@ public class TeamServiceImpl implements ITeamService {
     private final IPlayerRepository playerRepository;
     private final ICoachRepository coachRepository;
 
+    private final static String TEAMS = "Teams";
+
     @Override
     public Team create(Team team) {
         Optional<Team> teamAlreadyExist = teamRepository.findByName(team.getName());
 
         if (teamAlreadyExist.isPresent()) {
-            throw new ConflictException("Already exist a Resource with same value of this field.", "name");
+            throw new ConflictException("Already exist a Resource with same value of this field.", "name", TEAMS);
         }
 
         return teamRepository.save(team);
@@ -56,14 +56,14 @@ public class TeamServiceImpl implements ITeamService {
     @Override
     public Team findById(Long id) {
         return teamRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Resource not Found.")
+                () -> new ResourceNotFoundException("Resource not Found.", TEAMS)
         );
     }
 
     @Override
     public Team findByName(String name) {
         return teamRepository.findByName(name).orElseThrow(
-                () -> new ResourceNotFoundException("Resource not Found.")
+                () -> new ResourceNotFoundException("Resource not Found.", TEAMS)
         );
     }
 
@@ -141,7 +141,7 @@ public class TeamServiceImpl implements ITeamService {
             player.setTeam(null);
             playerRepository.save(player);
         } else {
-            throw new ForbiddenException("Invalid Operation.");
+            throw new ForbiddenException("Invalid Operation.", "Teams.Persons");
         }
     }
 
