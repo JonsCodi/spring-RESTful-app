@@ -36,7 +36,7 @@ public class PersonHierarchyController {
     private final ITeamService teamService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Person> create(@PathVariable("idTeam") Long idTeam, @Valid  @RequestBody BasePersonRequest basePersonRequest) {
+    public ResponseEntity<Person> create(@PathVariable Long idTeam, @Valid  @RequestBody BasePersonRequest basePersonRequest) {
         Team team = teamService.findById(idTeam);
 
         Person person = personService.createOrUpdate(PersonFactory.createPerson(basePersonRequest));
@@ -53,7 +53,7 @@ public class PersonHierarchyController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Person>> getAll(@PathVariable("idTeam") Long idTeam) {
+    public ResponseEntity<List<Person>> getAll(@PathVariable Long idTeam) {
         Team team = teamService.findById(idTeam);
 
         List<Person> persons = new ArrayList<>(team.getPlayers());
@@ -65,7 +65,7 @@ public class PersonHierarchyController {
     }
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Person> get(@PathVariable("idTeam") Long idTeam, @PathVariable("id") Long id) {
+    public ResponseEntity<Person> get(@PathVariable Long idTeam, @PathVariable Long id) {
         Team team = teamService.findById(idTeam);
 
         if(Objects.nonNull(team.getCoach()) && team.getCoach().getId().equals(id)){
@@ -82,7 +82,7 @@ public class PersonHierarchyController {
     }
 
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity remove(@PathVariable("idTeam") Long idTeam, @PathVariable("id") Long id) {
+    public ResponseEntity remove(@PathVariable Long idTeam, @PathVariable Long id) {
         Team team = teamService.findById(idTeam);
         Person person = personService.findById(id);
 

@@ -50,12 +50,12 @@ public class PersonController {
     }
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Person> get(@PathVariable("id") Long id) {
+    public ResponseEntity<Person> get(@PathVariable Long id) {
         return ResponseEntity.ok(personService.findById(id));
     }
 
     @PatchMapping(path = "/{id}", consumes = PatchMediaType.APPLICATION_JSON_PATCH_VALUE)
-    public ResponseEntity update(@PathVariable("id") Long id, @RequestBody JsonPatch jsonPatch) {
+    public ResponseEntity update(@PathVariable Long id, @RequestBody JsonPatch jsonPatch) {
         Person person = personService.findById(id);
         Person personPatched = patchHelperComponent.applyPatch(jsonPatch, person);
 
@@ -65,7 +65,7 @@ public class PersonController {
     }
 
     @PatchMapping(path = "/{id}", consumes = PatchMediaType.APPLICATION_MERGE_PATCH_VALUE)
-    public ResponseEntity update(@PathVariable("id") Long id, @RequestBody JsonMergePatch jsonMergePatch) {
+    public ResponseEntity update(@PathVariable Long id, @RequestBody JsonMergePatch jsonMergePatch) {
         Person person = personService.findById(id);
         Person personMerged = patchHelperComponent.applyMergePatch(jsonMergePatch, person);
 
@@ -75,7 +75,7 @@ public class PersonController {
     }
 
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity delete(@PathVariable("id") Long id) {
+    public ResponseEntity delete(@PathVariable Long id) {
         Person person = personService.findById(id);
         personService.delete(person);
 

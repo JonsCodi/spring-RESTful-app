@@ -51,12 +51,12 @@ public class TeamController {
     }
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Team> get(@PathVariable("id") Long id) {
+    public ResponseEntity<Team> get(@PathVariable Long id) {
         return ResponseEntity.ok(teamService.findById(id));
     }
 
     @PatchMapping(path = "/{id}", consumes = PatchMediaType.APPLICATION_JSON_PATCH_VALUE)
-    public ResponseEntity update(@PathVariable("id") Long id, @RequestBody JsonPatch jsonPatch) {
+    public ResponseEntity update(@PathVariable Long id, @RequestBody JsonPatch jsonPatch) {
         Team team = teamService.findById(id);
         Team teamPatched = patchHelperComponent.applyPatch(jsonPatch, team);
 
@@ -66,7 +66,7 @@ public class TeamController {
     }
 
     @PatchMapping(path = "/{id}", produces = PatchMediaType.APPLICATION_MERGE_PATCH_VALUE)
-    public ResponseEntity update(@PathVariable("id") Long id, @RequestBody JsonMergePatch jsonMergePatch){
+    public ResponseEntity update(@PathVariable Long id, @RequestBody JsonMergePatch jsonMergePatch){
         Team team = teamService.findById(id);
         Team teamMerged = patchHelperComponent.applyMergePatch(jsonMergePatch, team);
 
@@ -76,7 +76,7 @@ public class TeamController {
     }
 
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity delete(@PathVariable("id") Long id) {
+    public ResponseEntity delete(@PathVariable Long id) {
         teamService.deleteById(id);
 
         return ResponseEntity.ok().build();

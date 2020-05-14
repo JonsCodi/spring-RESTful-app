@@ -50,12 +50,12 @@ public class SoccerLeagueController {
     }
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SoccerLeague> get(@PathVariable("id") Long id) {
+    public ResponseEntity<SoccerLeague> get(@PathVariable Long id) {
         return ResponseEntity.ok(soccerLeagueService.findById(id));
     }
 
     @PatchMapping(path = "/{id}", consumes = PatchMediaType.APPLICATION_JSON_PATCH_VALUE)
-    public ResponseEntity update(@PathVariable("id") Long id, @RequestBody JsonPatch jsonPatch) {
+    public ResponseEntity update(@PathVariable Long id, @RequestBody JsonPatch jsonPatch) {
         SoccerLeague soccerLeague = soccerLeagueService.findById(id);
         SoccerLeague soccerLeaguePatched = patchHelperComponent.applyPatch(jsonPatch, soccerLeague);
 
@@ -65,7 +65,7 @@ public class SoccerLeagueController {
     }
 
     @PatchMapping(path = "/{id}", consumes = PatchMediaType.APPLICATION_MERGE_PATCH_VALUE)
-    public ResponseEntity update(@PathVariable("id") Long id, @RequestBody JsonMergePatch jsonMergePatch) {
+    public ResponseEntity update(@PathVariable Long id, @RequestBody JsonMergePatch jsonMergePatch) {
         SoccerLeague soccerLeague = soccerLeagueService.findById(id);
         SoccerLeague soccerLeagueMerged = patchHelperComponent.applyMergePatch(jsonMergePatch, soccerLeague);
 
@@ -75,7 +75,7 @@ public class SoccerLeagueController {
     }
 
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity delete(@PathVariable("id") Long id) {
+    public ResponseEntity delete(@PathVariable Long id) {
         soccerLeagueService.deleteById(id);
 
         return ResponseEntity.ok().build();

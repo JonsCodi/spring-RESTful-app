@@ -14,14 +14,14 @@ import java.util.Set;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/soccer-leagues/{name}/games")
+@RequestMapping("/soccer-leagues/{id}/games")
 public class GameController {
 
     private final ISoccerLeagueService soccerLeagueService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Set<Game>> getAll(@PathVariable("name") String name) {
-        return ResponseEntity.ok(soccerLeagueService.findByName(name).getGames());
+    public ResponseEntity<Set<Game>> getAll(@PathVariable Long id) {
+        return ResponseEntity.ok(soccerLeagueService.findById(id).getGames());
     }
 
 }
