@@ -1,20 +1,24 @@
 package org.restful.soccer_league.domains.utils.exceptions.handler;
 
 import com.github.fge.jsonpatch.JsonPatchException;
-import lombok.RequiredArgsConstructor;
+import org.restful.soccer_league.domains.utils.RequestURIUtils;
 import org.restful.soccer_league.domains.utils.exceptions.ConflictException;
 import org.restful.soccer_league.domains.utils.exceptions.ForbiddenException;
 import org.restful.soccer_league.domains.utils.exceptions.ResourceNotFoundException;
 import org.restful.soccer_league.domains.utils.exceptions.enums.ErrorCodeEnum;
 import org.restful.soccer_league.domains.utils.exceptions.handler.pojo.ClientResponse;
 import org.restful.soccer_league.domains.utils.exceptions.handler.pojo.DetailError;
+import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.UnsatisfiedServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -26,7 +30,6 @@ import java.util.List;
 public class RestResponseEntityExceptionHandler {
 
     private static final String ERROR = "error";
-    private String requestURI;
 
     @ExceptionHandler({ConflictException.class})
     public ResponseEntity<Object> handleConflict(ConflictException ex) {
@@ -38,8 +41,7 @@ public class RestResponseEntityExceptionHandler {
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpServletRequest request) {
-        requestURI = request.getRequestURI();
-        String resource = requestURI.substring(request.getRequestURI().lastIndexOf("/") + 1);
+        String resource = RequestURIUtils.getResourceFromURI(request.getRequestURI());
 
         List<DetailError> details = new ArrayList<>();
         for (FieldError error : ex.getBindingResult().getFieldErrors()) {
@@ -67,10 +69,19 @@ public class RestResponseEntityExceptionHandler {
         return new ResponseEntity<>(clientResponse, new HttpHeaders(), HttpStatus.FORBIDDEN);
     }
 
-    @ExceptionHandler({HttpMessageNotReadableException.class})
-    public ResponseEntity<Object> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex, HttpServletRequest request) {
-        requestURI = request.getRequestURI();
-        String resource = requestURI.substring(request.getRequestURI().lastIndexOf("/") + 1);
+    @ExceptionHandler({UnsatisfiedServletRequestParameterException.class})
+    public ResponseEntity<Object> handleUnsatisfiedServletRequestParameterException(UnsatisfiedServletRequestParameterException ex, HttpServletRequest request) {
+        String resource = RequestURIUtils.getResourceFromURI(request.getRequestURI());
+
+        ClientResponse clientResponse = new ClientResponse(null,
+                new DetailError(StringUtils.capitalize(resource), null, ex.getMessage(), ErrorCodeEnum.MISSING_PARAM.getCode()), ERROR);
+
+        return new ResponseEntity<>(clientResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({PropertyReferenceException.class, IllegalArgumentException.class, JsonPatchException.class, HttpMessageNotReadableException.class})
+    public ResponseEntity<Object> handlePropertyReferenceException(PropertyReferenceException ex, HttpServletRequest request) {
+        String resource = RequestURIUtils.getResourceFromURI(request.getRequestURI());
 
         ClientResponse clientResponse = new ClientResponse(null,
                 new DetailError(StringUtils.capitalize(resource), null, ex.getMessage(), ErrorCodeEnum.INVALID.getCode()), ERROR);
@@ -78,16 +89,24 @@ public class RestResponseEntityExceptionHandler {
         return new ResponseEntity<>(clientResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({JsonPatchException.class})
-    public ResponseEntity<Object> handleJsonPatchException(JsonPatchException ex, HttpServletRequest request) {
-        requestURI = request.getRequestURI();
-        String resource = requestURI.substring(request.getRequestURI().lastIndexOf("/") + 1);
+    @ExceptionHandler({HttpMediaTypeNotSupportedException.class})
+    public ResponseEntity<Object> handleHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException ex, HttpServletRequest request) {
+        String resource = RequestURIUtils.getResourceFromURI(request.getRequestURI());
 
         ClientResponse clientResponse = new ClientResponse(null,
                 new DetailError(StringUtils.capitalize(resource), null, ex.getMessage(), ErrorCodeEnum.INVALID.getCode()), ERROR);
 
-        return new ResponseEntity<>(clientResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(clientResponse, new HttpHeaders(), HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     }
 
+    @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
+    public ResponseEntity<Object> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException ex, HttpServletRequest request) {
+        String resource = RequestURIUtils.getResourceFromURI(request.getRequestURI());
+
+        ClientResponse clientResponse = new ClientResponse(null,
+                new DetailError(StringUtils.capitalize(resource), null, ex.getMessage(), ErrorCodeEnum.INVALID.getCode()), ERROR);
+
+        return new ResponseEntity<>(clientResponse, new HttpHeaders(), HttpStatus.METHOD_NOT_ALLOWED);
+    }
 
 }

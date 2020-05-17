@@ -12,9 +12,11 @@ import org.restful.soccer_league.domains.team.service.ITeamService;
 import org.restful.soccer_league.domains.utils.exceptions.ConflictException;
 import org.restful.soccer_league.domains.utils.exceptions.ForbiddenException;
 import org.restful.soccer_league.domains.utils.exceptions.ResourceNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -44,11 +46,6 @@ public class TeamServiceImpl implements ITeamService {
     }
 
     @Override
-    public void delete(Team team) {
-        teamRepository.delete(team);
-    }
-
-    @Override
     public void deleteById(long id) {
         teamRepository.deleteById(id);
     }
@@ -56,20 +53,20 @@ public class TeamServiceImpl implements ITeamService {
     @Override
     public Team findById(Long id) {
         return teamRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Resource not Found.", TEAMS)
+                () -> new ResourceNotFoundException("Resource not found.", TEAMS)
         );
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public Team findByName(String name) {
-        return teamRepository.findByName(name).orElseThrow(
-                () -> new ResourceNotFoundException("Resource not Found.", TEAMS)
-        );
-    }
+    public Page<Team> findAll(Pageable pageable) {
+        Page<Team> teamSlice = teamRepository.findAll(pageable);
 
-    @Override
-    public List<Team> findAll() {
-        return (List<Team>) teamRepository.findAll();
+        if(teamSlice.getContent().isEmpty()){
+            throw new ResourceNotFoundException("Resource not found.", TEAMS);
+        }
+
+        return teamSlice;
     }
 
     @Override

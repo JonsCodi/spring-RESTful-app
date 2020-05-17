@@ -72,7 +72,7 @@ public class Team implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime disabledAt;
 
-    public Team(String name) {
+    public  Team(String name) {
         this.name = name;
     }
 
