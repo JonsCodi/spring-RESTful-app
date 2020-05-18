@@ -29,12 +29,10 @@ import java.util.List;
 @RestControllerAdvice
 public class RestResponseEntityExceptionHandler {
 
-    private static final String ERROR = "error";
-
     @ExceptionHandler({ConflictException.class})
     public ResponseEntity<Object> handleConflict(ConflictException ex) {
         ClientResponse clientResponse = new ClientResponse(null,
-                new DetailError(ex.getResource(), ex.getField(), ex.getMessage(), ErrorCodeEnum.ALREADY_EXISTS.getCode()), ERROR);
+                new DetailError(ex.getResource(), ex.getField(), ex.getMessage(), ErrorCodeEnum.ALREADY_EXISTS.getCode()));
 
         return new ResponseEntity<>(clientResponse, new HttpHeaders(), HttpStatus.CONFLICT);
     }
@@ -48,7 +46,7 @@ public class RestResponseEntityExceptionHandler {
             details.add(new DetailError(StringUtils.capitalize(resource), error.getField(), error.getDefaultMessage(), ErrorCodeEnum.MISSING_FIELD.getCode()));
         }
 
-        ClientResponse clientResponse = new ClientResponse(null, details, ERROR);
+        ClientResponse clientResponse = new ClientResponse(null, details);
 
         return new ResponseEntity<>(clientResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
@@ -56,7 +54,7 @@ public class RestResponseEntityExceptionHandler {
     @ExceptionHandler({ResourceNotFoundException.class})
     public ResponseEntity<Object> handleResourceNotFound(ResourceNotFoundException ex) {
         ClientResponse clientResponse = new ClientResponse(null,
-                new DetailError(ex.getResource(), null, ex.getMessage(), ErrorCodeEnum.MISSING.getCode()), ERROR);
+                new DetailError(ex.getResource(), null, ex.getMessage(), ErrorCodeEnum.MISSING.getCode()));
 
         return new ResponseEntity<>(clientResponse, new HttpHeaders(), HttpStatus.NOT_FOUND);
     }
@@ -64,7 +62,7 @@ public class RestResponseEntityExceptionHandler {
     @ExceptionHandler({ForbiddenException.class})
     public ResponseEntity<Object> handleForbiddenException(ForbiddenException ex) {
         ClientResponse clientResponse = new ClientResponse(null,
-                new DetailError(ex.getResource(), null, ex.getMessage(), ErrorCodeEnum.FORBIDDEN.getCode()), ERROR);
+                new DetailError(ex.getResource(), null, ex.getMessage(), ErrorCodeEnum.FORBIDDEN.getCode()));
 
         return new ResponseEntity<>(clientResponse, new HttpHeaders(), HttpStatus.FORBIDDEN);
     }
@@ -74,7 +72,7 @@ public class RestResponseEntityExceptionHandler {
         String resource = RequestURIUtils.getResourceFromURI(request.getRequestURI());
 
         ClientResponse clientResponse = new ClientResponse(null,
-                new DetailError(StringUtils.capitalize(resource), null, ex.getMessage(), ErrorCodeEnum.MISSING_PARAM.getCode()), ERROR);
+                new DetailError(StringUtils.capitalize(resource), null, ex.getMessage(), ErrorCodeEnum.MISSING_PARAM.getCode()));
 
         return new ResponseEntity<>(clientResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
@@ -84,7 +82,7 @@ public class RestResponseEntityExceptionHandler {
         String resource = RequestURIUtils.getResourceFromURI(request.getRequestURI());
 
         ClientResponse clientResponse = new ClientResponse(null,
-                new DetailError(StringUtils.capitalize(resource), null, ex.getMessage(), ErrorCodeEnum.INVALID.getCode()), ERROR);
+                new DetailError(StringUtils.capitalize(resource), null, ex.getMessage(), ErrorCodeEnum.INVALID.getCode()));
 
         return new ResponseEntity<>(clientResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
@@ -94,7 +92,7 @@ public class RestResponseEntityExceptionHandler {
         String resource = RequestURIUtils.getResourceFromURI(request.getRequestURI());
 
         ClientResponse clientResponse = new ClientResponse(null,
-                new DetailError(StringUtils.capitalize(resource), null, ex.getMessage(), ErrorCodeEnum.INVALID.getCode()), ERROR);
+                new DetailError(StringUtils.capitalize(resource), null, ex.getMessage(), ErrorCodeEnum.INVALID.getCode()));
 
         return new ResponseEntity<>(clientResponse, new HttpHeaders(), HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     }
@@ -104,7 +102,7 @@ public class RestResponseEntityExceptionHandler {
         String resource = RequestURIUtils.getResourceFromURI(request.getRequestURI());
 
         ClientResponse clientResponse = new ClientResponse(null,
-                new DetailError(StringUtils.capitalize(resource), null, ex.getMessage(), ErrorCodeEnum.INVALID.getCode()), ERROR);
+                new DetailError(StringUtils.capitalize(resource), null, ex.getMessage(), ErrorCodeEnum.INVALID.getCode()));
 
         return new ResponseEntity<>(clientResponse, new HttpHeaders(), HttpStatus.METHOD_NOT_ALLOWED);
     }

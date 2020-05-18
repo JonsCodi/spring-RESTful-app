@@ -1,6 +1,7 @@
 package org.restful.soccer_league.domains.utils.exceptions.handler.pojo;
 
 import lombok.Getter;
+import org.restful.soccer_league.domains.utils.enums.ClientResponseType;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -15,10 +16,10 @@ public class ClientResponse implements Serializable {
     private Object data;
     private Object details;
 
-    public ClientResponse(Object data, Object details, String status) {
+    public ClientResponse(Object data, Object details) {
         this.timestamp = System.currentTimeMillis();
         this.date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss"));
-        this.status = status;
+        this.status = ClientResponseType.ERROR.getMessage();
         this.data = data;
         this.details = details;
     }
