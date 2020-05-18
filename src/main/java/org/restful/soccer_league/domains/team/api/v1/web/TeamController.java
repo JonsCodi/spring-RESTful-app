@@ -3,22 +3,20 @@ package org.restful.soccer_league.domains.team.api.v1.web;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.mergepatch.JsonMergePatch;
 import lombok.RequiredArgsConstructor;
+import org.restful.soccer_league.domains.team.api.v1.web.assembler.TeamModelAssembler;
+import org.restful.soccer_league.domains.team.api.v1.web.model.TeamModel;
 import org.restful.soccer_league.domains.team.api.v1.web.request.TeamCreateRequest;
 import org.restful.soccer_league.domains.team.entity.Team;
 import org.restful.soccer_league.domains.team.factory.TeamFactory;
 import org.restful.soccer_league.domains.team.service.ITeamService;
+import org.restful.soccer_league.domains.utils.api.web.v1.response.ResponseSuccessBody;
 import org.restful.soccer_league.domains.utils.components.PatchHelperComponent;
 import org.restful.soccer_league.domains.utils.constants.PatchMediaType;
-import org.restful.soccer_league.domains.utils.pageable.OffsetBasedPageRequest;
-import org.restful.soccer_league.domains.utils.response.LinkEnum;
-import org.restful.soccer_league.domains.utils.response.LinkPage;
-import org.restful.soccer_league.domains.utils.response.ResponseSuccessBody;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpMethod;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,15 +26,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
 
 @RequiredArgsConstructor
 @RestController
@@ -45,9 +39,14 @@ public class TeamController {
 
     private final ITeamService teamService;
     private final PatchHelperComponent patchHelperComponent;
+    private final PagedResourcesAssembler<Team> teamResourcesAssembler;
+    private final TeamModelAssembler teamModelAssembler;
 
     @Value("${service.base_url}")
     private String baseUrl;
+
+    private final static String OFFSET_PARAM = "?offset=";
+    private final static String PATH = "/teams";
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity create(@Valid @RequestBody TeamCreateRequest teamCreateRequest) {
@@ -62,27 +61,14 @@ public class TeamController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseSuccessBody> getAll(@RequestParam(value = "limit", defaultValue = "10") int limit,
-                                                      @RequestParam(value = "offset", defaultValue = "0") int offset,
-                                                      @RequestParam(value = "order", defaultValue = "ASC", required = false) String order,
-                                                      @RequestParam(value = "sortBy", required = false) String... sortByParams) {
-        Pageable pageable = new OffsetBasedPageRequest(limit, offset, Sort.Direction.fromString(order), sortByParams);
-        Page<Team> page = teamService.findAll(pageable);
-        List<Team> teams = page.getContent();
+    public ResponseEntity<ResponseSuccessBody> getAll(Pageable pageable) {
 
-        //TODO: Falta ainda criar a estrutura de Links da sua paginação.. é complicadinho..
-        List<LinkPage> linkPages = Arrays.asList(
-                new LinkPage(baseUrl.concat("/teams?offset=0"), HttpMethod.GET.name(), LinkEnum.FIRST.getRel()),
-                new LinkPage(baseUrl.concat("/teams?offset=").concat(String.valueOf(pageable.previousOrFirst().getOffset())),
-                        HttpMethod.GET.name(), LinkEnum.PREV.getRel()),
-                new LinkPage(baseUrl.concat("/teams?offset=").concat(String.valueOf(pageable.next().getOffset())),
-                        HttpMethod.GET.name(), LinkEnum.NEXT.getRel()),
-                new LinkPage(baseUrl.concat("/teams?offset=").concat(String.valueOf(page.nextOrLastPageable().getOffset())),
-                        HttpMethod.GET.name(), LinkEnum.LAST.getRel())
-        );
+        Page<Team> teams = teamService.findAll(pageable);
+
+        PagedModel<TeamModel> teamModel = teamResourcesAssembler.toModel(teams, teamModelAssembler);
 
         ResponseSuccessBody successBody = new ResponseSuccessBody(
-                linkPages, teams.size(), page.getTotalElements(), teams
+                teamModel.getLinks(), teamModel.getContent(), teamModel.getMetadata()
         );
 
         return ResponseEntity.ok(successBody);
