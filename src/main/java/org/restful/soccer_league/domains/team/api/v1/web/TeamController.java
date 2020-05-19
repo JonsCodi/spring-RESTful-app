@@ -42,12 +42,6 @@ public class TeamController {
     private final PagedResourcesAssembler<Team> teamResourcesAssembler;
     private final TeamModelAssembler teamModelAssembler;
 
-    @Value("${service.base_url}")
-    private String baseUrl;
-
-    private final static String OFFSET_PARAM = "?offset=";
-    private final static String PATH = "/teams";
-
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity create(@Valid @RequestBody TeamCreateRequest teamCreateRequest) {
         Team team = teamService.create(TeamFactory.createTeam(teamCreateRequest));

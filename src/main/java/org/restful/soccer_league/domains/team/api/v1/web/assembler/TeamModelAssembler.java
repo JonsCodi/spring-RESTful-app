@@ -22,8 +22,8 @@ public class TeamModelAssembler extends RepresentationModelAssemblerSupport<Team
 
         TeamModel teamModel = instantiateModel(entity);
 
-        teamModel.add(linkTo(methodOn(TeamController.class)
-                .get(entity.getId())).withSelfRel());
+//        teamModel.add(linkTo(methodOn(TeamController.class)
+//                .get(entity.getId())).withSelfRel());
 
         teamModel.setId(entity.getId());
         teamModel.setName(entity.getName());
