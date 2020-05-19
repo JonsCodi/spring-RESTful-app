@@ -1,6 +1,7 @@
 package org.restful.soccer_league.domains.team.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @ToString
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 public class Record implements Serializable {
 
@@ -34,16 +36,16 @@ public class Record implements Serializable {
 
     @CreationTimestamp
     @Column(name = "created_at", columnDefinition = "DATETIME")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Column(name = "updated_at", columnDefinition = "DATETIME")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 
     @Column(name = "disabled_at", columnDefinition = "DATETIME")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime disabledAt;
 
     public Record(int wins, int losses) {

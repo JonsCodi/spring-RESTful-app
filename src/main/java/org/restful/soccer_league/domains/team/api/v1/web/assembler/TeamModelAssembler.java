@@ -3,7 +3,6 @@ package org.restful.soccer_league.domains.team.api.v1.web.assembler;
 import org.restful.soccer_league.domains.team.api.v1.web.TeamController;
 import org.restful.soccer_league.domains.team.api.v1.web.model.TeamModel;
 import org.restful.soccer_league.domains.team.entity.Team;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
@@ -22,8 +21,8 @@ public class TeamModelAssembler extends RepresentationModelAssemblerSupport<Team
 
         TeamModel teamModel = instantiateModel(entity);
 
-//        teamModel.add(linkTo(methodOn(TeamController.class)
-//                .get(entity.getId())).withSelfRel());
+        teamModel.add(linkTo(methodOn(TeamController.class)
+                .get("all", entity.getId())).withSelfRel());
 
         teamModel.setId(entity.getId());
         teamModel.setName(entity.getName());

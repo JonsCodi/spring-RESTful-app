@@ -78,7 +78,7 @@ public class RestResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler({PropertyReferenceException.class, IllegalArgumentException.class, JsonPatchException.class, HttpMessageNotReadableException.class})
-    public ResponseEntity<Object> handlePropertyReferenceException(PropertyReferenceException ex, HttpServletRequest request) {
+    public ResponseEntity<Object> handlePropertyReferenceException(Exception ex, HttpServletRequest request) {
         String resource = RequestURIUtils.getResourceFromURI(request.getRequestURI());
 
         ClientResponse clientResponse = new ClientResponse(null,

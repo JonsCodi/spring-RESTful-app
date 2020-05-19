@@ -11,8 +11,10 @@ import org.restful.soccer_league.domains.team.factory.TeamFactory;
 import org.restful.soccer_league.domains.team.service.ITeamService;
 import org.restful.soccer_league.domains.utils.api.web.v1.response.ResponseSuccessBody;
 import org.restful.soccer_league.domains.utils.components.PatchHelperComponent;
+import org.restful.soccer_league.domains.utils.components.ResponseEntityComponent;
 import org.restful.soccer_league.domains.utils.constants.PatchMediaType;
-import org.springframework.beans.factory.annotation.Value;
+import org.restful.soccer_league.domains.utils.enums.FieldsEnum;
+import org.restful.soccer_league.domains.utils.enums.FiltersEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -42,6 +45,8 @@ public class TeamController {
     private final PagedResourcesAssembler<Team> teamResourcesAssembler;
     private final TeamModelAssembler teamModelAssembler;
 
+    private final ResponseEntityComponent responseEntityComponent;
+
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity create(@Valid @RequestBody TeamCreateRequest teamCreateRequest) {
         Team team = teamService.create(TeamFactory.createTeam(teamCreateRequest));
@@ -55,22 +60,31 @@ public class TeamController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseSuccessBody> getAll(Pageable pageable) {
-
+    public ResponseEntity<ResponseSuccessBody> getAll(@RequestParam(value = "fields", required = false, defaultValue = "all") String fields,
+                                                      Pageable pageable) {
         Page<Team> teams = teamService.findAll(pageable);
-
         PagedModel<TeamModel> teamModel = teamResourcesAssembler.toModel(teams, teamModelAssembler);
 
-        ResponseSuccessBody successBody = new ResponseSuccessBody(
-                teamModel.getLinks(), teamModel.getContent(), teamModel.getMetadata()
-        );
+        if(fields.equals(FieldsEnum.ALL.getField())) {
+            return responseEntityComponent.returnAllContent(FiltersEnum.TEAM, teamModel.getContent(), teamModel.getLinks(), teamModel.getMetadata());
+        }
 
-        return ResponseEntity.ok(successBody);
+        return responseEntityComponent.returnPartialContent(FiltersEnum.TEAM, fields,
+                teamModel.getContent(), teamModel.getLinks(), teamModel.getMetadata());
     }
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Team> get(@PathVariable Long id) {
-        return ResponseEntity.ok(teamService.findById(id));
+    public ResponseEntity<ResponseSuccessBody> get(@RequestParam(value = "fields", required = false, defaultValue = "all") String fields,
+                                                   @PathVariable Long id) {
+        Team team = teamService.findById(id);
+        TeamModel teamModel = teamModelAssembler.toModel(team);
+
+        if(fields.equals(FieldsEnum.ALL.getField())){
+            return responseEntityComponent.returnAllContent(FiltersEnum.TEAM, teamModel, null, null);
+        }
+
+        return responseEntityComponent.returnPartialContent(FiltersEnum.TEAM, fields,
+                teamModel, null, null);
     }
 
     @PatchMapping(path = "/{id}", consumes = PatchMediaType.APPLICATION_JSON_PATCH_VALUE)

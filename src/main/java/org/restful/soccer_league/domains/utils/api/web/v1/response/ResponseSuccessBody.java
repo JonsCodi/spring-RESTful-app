@@ -1,5 +1,7 @@
 package org.restful.soccer_league.domains.utils.api.web.v1.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
 import org.restful.soccer_league.domains.utils.enums.ClientResponseType;
 import org.springframework.hateoas.Links;
@@ -7,8 +9,9 @@ import org.springframework.hateoas.Links;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collection;
 
+@JsonPropertyOrder({ "timestamp", "date", "status", "fields", "data", "links", "page" })
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 public class ResponseSuccessBody implements Serializable {
 
@@ -17,16 +20,18 @@ public class ResponseSuccessBody implements Serializable {
     private long timestamp;
     private String date;
     private String status;
+    private Object fields;
+    private Object data;
     private Links links;
-    private Collection data;
     private Object page;
 
-    public ResponseSuccessBody(Links links, Collection data, Object page) {
+    public ResponseSuccessBody(Links links, Object data, Object fields, Object page) {
         this.timestamp = System.currentTimeMillis();
-        this.date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss"));
+        this.date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        this.data = data;
+        this.fields = fields;
         this.status = ClientResponseType.SUCCESS.getMessage();
         this.links = links;
-        this.data = data;
         this.page = page;
     }
 
