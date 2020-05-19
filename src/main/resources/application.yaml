@@ -2,4 +2,4 @@ spring:
   data:
     web:
       pageable:
-        default-page-size: 20git comm
+        default-page-size: 20
