@@ -5,6 +5,7 @@ import org.restful.soccer_league.domains.utils.RequestURIUtils;
 import org.restful.soccer_league.domains.utils.exceptions.ConflictException;
 import org.restful.soccer_league.domains.utils.exceptions.ForbiddenException;
 import org.restful.soccer_league.domains.utils.exceptions.ResourceNotFoundException;
+import org.restful.soccer_league.domains.utils.exceptions.UnknownFieldException;
 import org.restful.soccer_league.domains.utils.exceptions.enums.ErrorCodeEnum;
 import org.restful.soccer_league.domains.utils.exceptions.handler.pojo.ClientResponse;
 import org.restful.soccer_league.domains.utils.exceptions.handler.pojo.DetailError;
@@ -77,7 +78,7 @@ public class RestResponseEntityExceptionHandler {
         return new ResponseEntity<>(clientResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({PropertyReferenceException.class, IllegalArgumentException.class, JsonPatchException.class, HttpMessageNotReadableException.class})
+    @ExceptionHandler({PropertyReferenceException.class, IllegalArgumentException.class, JsonPatchException.class, HttpMessageNotReadableException.class, UnknownFieldException.class})
     public ResponseEntity<Object> handlePropertyReferenceException(Exception ex, HttpServletRequest request) {
         String resource = RequestURIUtils.getResourceFromURI(request.getRequestURI());
 

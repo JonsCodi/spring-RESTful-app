@@ -20,13 +20,14 @@ public class ResponseEntityComponent {
 
     private static final String DELIMITATOR = ",";
 
+    //TODO: 5 params.. parece demais...
     public ResponseEntity<ResponseSuccessBody> returnPartialContent(FiltersEnum jsonFilter, String fields, Object object, Links links, Object page) {
         fields = fields.replace(" ", "");
 
         beanPropertyFilterComponent.createFilter(jsonFilter.getFilter(), SimpleBeanPropertyFilter.filterOutAllExcept(fields.split(DELIMITATOR)));
         Object modelObject = beanPropertyFilterComponent.convertToObject(object, Object.class);
 
-        ObjectUtils.throwIfOnlyHaveInvalidFields(fields, modelObject);
+        ObjectUtils.throwUnknownFieldException(fields, modelObject);
         List<Object> correctFields = ObjectUtils.getFieldsFromModelObject(fields, modelObject);
 
         ResponseSuccessBody successBody = new ResponseSuccessBody(

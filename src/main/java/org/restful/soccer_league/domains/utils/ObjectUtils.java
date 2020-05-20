@@ -1,5 +1,7 @@
 package org.restful.soccer_league.domains.utils;
 
+import org.restful.soccer_league.domains.utils.exceptions.UnknownFieldException;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -13,11 +15,9 @@ public final class ObjectUtils {
         List<Object> correctFields = new ArrayList<>();
 
         for(String field : fields.split(DELIMITATOR)) {
-            Object fieldValueFromModelObject = new Object();
+            Object fieldNameFromModelObject = getFieldName(modelObject, field);
 
-            fieldValueFromModelObject = getFieldName(modelObject, field, fieldValueFromModelObject);
-
-            if(Objects.nonNull(fieldValueFromModelObject)) {
+            if(Objects.nonNull(fieldNameFromModelObject)) {
                 correctFields.add(field);
             }
         }
@@ -25,22 +25,24 @@ public final class ObjectUtils {
         return correctFields;
     }
 
-    private static Object getFieldName(Object modelObject, String field, Object fieldValueFromModelObject) {
+    private static Object getFieldName(Object modelObject, String field) {
+        Object fieldNameFromModelObject = null;
+
         if(modelObject instanceof ArrayList) {
             ArrayList list = (ArrayList) modelObject;
 
-            fieldValueFromModelObject = ((LinkedHashMap) list.get(0)).get(field);
+            fieldNameFromModelObject = ((LinkedHashMap) list.get(0)).get(field);
         }else if(modelObject instanceof LinkedHashMap) {
             LinkedHashMap linkedHashMap = (LinkedHashMap) modelObject;
 
-            fieldValueFromModelObject = linkedHashMap.get(field);
+            fieldNameFromModelObject = linkedHashMap.get(field);
         }
 
-        return fieldValueFromModelObject;
+        return fieldNameFromModelObject;
     }
 
     //TODO: Quando entrar na internacionalização: A camada de validação que deve cuidar de possíveis erros de Fields Inválidos.
-    public static void throwIfOnlyHaveInvalidFields(String fields, Object modelObject) {
+    public static void throwUnknownFieldException(String fields, Object modelObject) {
         if(modelObject instanceof ArrayList) {
             throwForArrayListObject(fields, (ArrayList) modelObject);
         }else if(modelObject instanceof LinkedHashMap) {
@@ -52,7 +54,7 @@ public final class ObjectUtils {
         LinkedHashMap linkedHashMap = modelObject;
 
         if(linkedHashMap.isEmpty()) {
-            throw new IllegalArgumentException("Have some invalid Fields: ".concat(fields));
+            throw new UnknownFieldException("You have some invalid Field(s).", fields);
         }
     }
 
@@ -60,7 +62,7 @@ public final class ObjectUtils {
         ArrayList list = modelObject;
 
         if(((LinkedHashMap) list.get(0)).isEmpty()) {
-            throw new IllegalArgumentException("Have some invalid Fields: ".concat(fields));
+            throw new UnknownFieldException("You have some invalid Field(s).", fields);
         }
     }
 }
