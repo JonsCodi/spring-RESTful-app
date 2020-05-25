@@ -108,4 +108,45 @@ public class RestResponseEntityExceptionHandler {
         return new ResponseEntity<>(clientResponse, new HttpHeaders(), HttpStatus.METHOD_NOT_ALLOWED);
     }
 
+    @ExceptionHandler({RSQLParserException.class})
+    public ResponseEntity<Object> handleRSQLParserException(RSQLParserException ex, HttpServletRequest request) {
+        String resource = RequestURIUtils.getResourceFromURI(request.getRequestURI());
+
+        ClientResponse clientResponse = new ClientResponse(null,
+                new DetailError(StringUtils.capitalize(resource), null, "Have invalid params in your search.", ErrorCodeEnum.INVALID.getCode()));
+
+        return new ResponseEntity<>(clientResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({InvalidDataAccessResourceUsageException.class})
+    public ResponseEntity<Object> handleInvalidDataAccessResourceUsageException(HttpServletRequest request) {
+        String resource = RequestURIUtils.getResourceFromURI(request.getRequestURI());
+
+        ClientResponse clientResponse = new ClientResponse(null,
+                new DetailError(StringUtils.capitalize(resource), request.getParameter("sort"),
+                        "Don't use nested object in sort mechanism with search.", ErrorCodeEnum.INVALID.getCode()));
+
+        return new ResponseEntity<>(clientResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({InvalidDataAccessApiUsageException.class})
+    public ResponseEntity<Object> handleInvalidDataAccessApiUsageException(HttpServletRequest request) {
+        String resource = RequestURIUtils.getResourceFromURI(request.getRequestURI());
+
+        ClientResponse clientResponse = new ClientResponse(null,
+                new DetailError(StringUtils.capitalize(resource), request.getParameter("search"),
+                        "Have invalid attributes in your search.", ErrorCodeEnum.INVALID.getCode()));
+
+        return new ResponseEntity<>(clientResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({InvalidComparisonOperationException.class})
+    public ResponseEntity<Object> handleInvalidComparisonOperationException(InvalidComparisonOperationException ex) {
+        ClientResponse clientResponse = new ClientResponse(null,
+                new DetailError(ex.getResource(), ex.getComparisonOperation(),
+                        ex.getMessage(), ErrorCodeEnum.INVALID.getCode()));
+
+        return new ResponseEntity<>(clientResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    }
+
 }

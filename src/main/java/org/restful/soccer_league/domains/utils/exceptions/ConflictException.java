@@ -14,7 +14,7 @@ public class ConflictException extends BusinessException {
     public String field;
 
     public ConflictException(String message, String field, String resource) {
-        super(message);
+        super(message, resource);
         this.field = field;
         this.resource = resource;
     }
