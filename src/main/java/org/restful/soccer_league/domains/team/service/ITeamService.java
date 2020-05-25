@@ -4,10 +4,7 @@ import org.restful.soccer_league.domains.team.entity.Person;
 import org.restful.soccer_league.domains.team.entity.Team;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-
-import javax.annotation.Nullable;
-import java.util.List;
+import org.springframework.data.jpa.domain.Specification;
 
 public interface ITeamService {
 
@@ -18,6 +15,7 @@ public interface ITeamService {
     Team findById(Long id);
 
     Page<Team> findAll(Pageable pageable);
+    Page<Team> findAll(Specification<Team> spec, Pageable pageable);
 
     void addPerson(Team team, Person person);
     void removePerson(Team team, Person person);

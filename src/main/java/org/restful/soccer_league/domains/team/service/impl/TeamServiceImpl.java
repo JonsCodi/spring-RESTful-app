@@ -63,10 +63,6 @@ public class TeamServiceImpl implements ITeamService {
     public Page<Team> findAll(Pageable pageable) {
         Page<Team> teamPage = teamRepository.findAll(pageable);
 
-        if(teamPage.getContent().isEmpty()){
-            throw new ResourceNotFoundException("Resource not found.", TEAMS);
-        }
-
         return teamPage;
     }
 
