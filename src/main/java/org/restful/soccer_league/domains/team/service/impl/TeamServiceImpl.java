@@ -71,6 +71,11 @@ public class TeamServiceImpl implements ITeamService {
     }
 
     @Override
+    public Page<Team> findAll(Specification<Team> spec, Pageable pageable) {
+        return teamRepository.findAll(spec, pageable);
+    }
+
+    @Override
     public void addPerson(Team team, Person person) {
         if (person instanceof Player) {
             addPlayer(team, (Player) person);
