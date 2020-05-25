@@ -1,14 +1,18 @@
 package org.restful.soccer_league.domains.utils.exceptions.handler;
 
 import com.github.fge.jsonpatch.JsonPatchException;
+import cz.jirutka.rsql.parser.RSQLParserException;
 import org.restful.soccer_league.domains.utils.RequestURIUtils;
 import org.restful.soccer_league.domains.utils.exceptions.ConflictException;
 import org.restful.soccer_league.domains.utils.exceptions.ForbiddenException;
+import org.restful.soccer_league.domains.utils.exceptions.InvalidComparisonOperationException;
 import org.restful.soccer_league.domains.utils.exceptions.ResourceNotFoundException;
 import org.restful.soccer_league.domains.utils.exceptions.UnknownFieldException;
 import org.restful.soccer_league.domains.utils.exceptions.enums.ErrorCodeEnum;
 import org.restful.soccer_league.domains.utils.exceptions.handler.pojo.ClientResponse;
 import org.restful.soccer_league.domains.utils.exceptions.handler.pojo.DetailError;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -135,7 +139,7 @@ public class RestResponseEntityExceptionHandler {
 
         ClientResponse clientResponse = new ClientResponse(null,
                 new DetailError(StringUtils.capitalize(resource), request.getParameter("search"),
-                        "Have invalid attributes in your search.", ErrorCodeEnum.INVALID.getCode()));
+                        "Have invalid attributes in your search.", ErrorCodeEnum.INVALID_PARAM.getCode()));
 
         return new ResponseEntity<>(clientResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
@@ -144,7 +148,7 @@ public class RestResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleInvalidComparisonOperationException(InvalidComparisonOperationException ex) {
         ClientResponse clientResponse = new ClientResponse(null,
                 new DetailError(ex.getResource(), ex.getComparisonOperation(),
-                        ex.getMessage(), ErrorCodeEnum.INVALID.getCode()));
+                        ex.getMessage(), ErrorCodeEnum.INVALID_PARAM.getCode()));
 
         return new ResponseEntity<>(clientResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
