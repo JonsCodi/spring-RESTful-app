@@ -47,6 +47,11 @@ public class TeamController {
 
     private final ResponseEntityComponent responseEntityComponent;
 
+    @PostConstruct
+    public void toFilter() {
+        this.responseEntityComponent.setJsonFilter(FiltersEnum.TEAM);
+    }
+
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity create(@Valid @RequestBody TeamCreateRequest teamCreateRequest) {
         Team team = teamService.create(TeamFactory.createTeam(teamCreateRequest));
@@ -65,11 +70,15 @@ public class TeamController {
         Page<Team> teams = teamService.findAll(pageable);
         PagedModel<TeamModel> teamModel = teamResourcesAssembler.toModel(teams, teamModelAssembler);
 
-        if(fields.equals(FieldsEnum.ALL.getField())) {
-            return responseEntityComponent.returnAllContent(FiltersEnum.TEAM, teamModel.getContent(), teamModel.getLinks(), teamModel.getMetadata());
+        if (teamModel.getContent().isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
-        return responseEntityComponent.returnPartialContent(FiltersEnum.TEAM, fields,
+        if (fields.equals(FieldsEnum.ALL.getField())) {
+            return responseEntityComponent.returnAllContent(teamModel.getContent(), teamModel.getLinks(), teamModel.getMetadata());
+        }
+
+        return responseEntityComponent.returnPartialContent(fields,
                 teamModel.getContent(), teamModel.getLinks(), teamModel.getMetadata());
     }
 
@@ -79,11 +88,11 @@ public class TeamController {
         Team team = teamService.findById(id);
         TeamModel teamModel = teamModelAssembler.toModel(team);
 
-        if(fields.equals(FieldsEnum.ALL.getField())){
-            return responseEntityComponent.returnAllContent(FiltersEnum.TEAM, teamModel, null, null);
+        if (fields.equals(FieldsEnum.ALL.getField())) {
+            return responseEntityComponent.returnAllContent(teamModel, null, null);
         }
 
-        return responseEntityComponent.returnPartialContent(FiltersEnum.TEAM, fields,
+        return responseEntityComponent.returnPartialContent(fields,
                 teamModel, null, null);
     }
 
