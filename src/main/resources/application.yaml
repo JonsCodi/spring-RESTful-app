@@ -3,3 +3,18 @@ spring:
     web:
       pageable:
         default-page-size: 20
+
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+
+#logging:
+#  level:
+#    org.hibernate.SQL: DEBUG
+#  org:
+#    hibernate:
+#      type:
+#        descriptor:
+#          sql:
+#            BasicBinder: TRACE
