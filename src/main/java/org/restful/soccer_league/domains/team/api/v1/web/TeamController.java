@@ -2,6 +2,8 @@ package org.restful.soccer_league.domains.team.api.v1.web;
 
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.mergepatch.JsonMergePatch;
+import cz.jirutka.rsql.parser.RSQLParser;
+import cz.jirutka.rsql.parser.ast.Node;
 import lombok.RequiredArgsConstructor;
 import org.restful.soccer_league.domains.team.api.v1.web.assembler.TeamModelAssembler;
 import org.restful.soccer_league.domains.team.api.v1.web.model.TeamModel;
@@ -15,10 +17,13 @@ import org.restful.soccer_league.domains.utils.components.ResponseEntityComponen
 import org.restful.soccer_league.domains.utils.constants.PatchMediaType;
 import org.restful.soccer_league.domains.utils.enums.FieldsEnum;
 import org.restful.soccer_league.domains.utils.enums.FiltersEnum;
+import org.restful.soccer_league.domains.utils.search.CustomRSQLVisitor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.annotation.PostConstruct;
 import javax.validation.Valid;
 import java.net.URI;
 
@@ -44,7 +50,6 @@ public class TeamController {
     private final PatchHelperComponent patchHelperComponent;
     private final PagedResourcesAssembler<Team> teamResourcesAssembler;
     private final TeamModelAssembler teamModelAssembler;
-
     private final ResponseEntityComponent responseEntityComponent;
 
     @PostConstruct
@@ -94,6 +99,28 @@ public class TeamController {
 
         return responseEntityComponent.returnPartialContent(fields,
                 teamModel, null, null);
+    }
+
+    @GetMapping(params = {"search"})
+    public ResponseEntity<ResponseSuccessBody> search(@RequestParam(value = "fields", required = false, defaultValue = "all") String fields,
+                                                      @RequestParam(value = "search", required = false) String search,
+                                                      Pageable pageable) {
+        Node rootNode = new RSQLParser().parse(search);
+        Specification<Team> spec = rootNode.accept(new CustomRSQLVisitor<>());
+
+        Page<Team> teams = teamService.findAll(spec, pageable);
+        PagedModel<TeamModel> teamModel = teamResourcesAssembler.toModel(teams, teamModelAssembler);
+
+        if (teamModel.getContent().isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        if (fields.equals(FieldsEnum.ALL.getField())) {
+            return responseEntityComponent.returnAllContent(teamModel.getContent(), teamModel.getLinks(), teamModel.getMetadata());
+        }
+
+        return responseEntityComponent.returnPartialContent(fields,
+                teamModel.getContent(), teamModel.getLinks(), teamModel.getMetadata());
     }
 
     @PatchMapping(path = "/{id}", consumes = PatchMediaType.APPLICATION_JSON_PATCH_VALUE)
