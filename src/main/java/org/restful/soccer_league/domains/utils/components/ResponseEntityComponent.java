@@ -2,6 +2,7 @@ package org.restful.soccer_league.domains.utils.components;
 
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.restful.soccer_league.domains.utils.ObjectUtils;
 import org.restful.soccer_league.domains.utils.api.web.v1.response.ResponseSuccessBody;
 import org.restful.soccer_league.domains.utils.enums.FiltersEnum;
