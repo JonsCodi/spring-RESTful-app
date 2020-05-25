@@ -8,8 +8,12 @@ public enum ErrorCodeEnum {
     MISSING_FIELD("missing_field"),
     MISSING_PARAM("missing_param"),
     INVALID("invalid"),
+    INVALID_PARAM("invalid_param"),
     FORBIDDEN("forbidden"),
-    ALREADY_EXISTS("already_exists");
+    ALREADY_EXISTS("already_exists"),
+
+
+    ;
 
     @Getter
     private String code;
