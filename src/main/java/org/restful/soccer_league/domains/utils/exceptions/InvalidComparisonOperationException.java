@@ -13,7 +13,7 @@ public class InvalidComparisonOperationException extends BusinessException {
     @Getter
     private String field;
 
-    public InvalidComparisonOperationException(String message, String resource,String field, String comparisonOperation) {
+    public InvalidComparisonOperationException(String message, String resource, String field, String comparisonOperation) {
         super(message, resource);
         this.field = field;
         this.comparisonOperation = comparisonOperation;

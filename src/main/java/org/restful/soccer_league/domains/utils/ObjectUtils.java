@@ -9,12 +9,10 @@ import java.util.Objects;
 
 public final class ObjectUtils {
 
-    private static final String DELIMITATOR = ",";
-
     public static List<Object> getFieldsFromModelObject(String fields, Object modelObject) {
         List<Object> correctFields = new ArrayList<>();
 
-        for(String field : fields.split(DELIMITATOR)) {
+        for(String field : fields.split(",")) {
             Object fieldNameFromModelObject = getFieldName(modelObject, field);
 
             if(Objects.nonNull(fieldNameFromModelObject)) {
