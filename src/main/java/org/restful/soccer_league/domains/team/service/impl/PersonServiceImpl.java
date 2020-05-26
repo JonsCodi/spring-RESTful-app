@@ -9,9 +9,9 @@ import org.restful.soccer_league.domains.team.repository.IPersonRepository;
 import org.restful.soccer_league.domains.team.repository.IPlayerRepository;
 import org.restful.soccer_league.domains.team.service.IPersonService;
 import org.restful.soccer_league.domains.utils.exceptions.ResourceNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -43,18 +43,6 @@ public class PersonServiceImpl implements IPersonService {
     }
 
     @Override
-    public void deleteById(long id) {
-        personBaseRepository.deleteById(id);
-    }
-
-    @Override
-    public Person findByName(String name) {
-        return personBaseRepository.findByName(name).orElseThrow(
-                () -> new ResourceNotFoundException(PERSONS, "Resource Not Found.")
-        );
-    }
-
-    @Override
     public Person findById(Long id) {
         return personBaseRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException(PERSONS, "Resource Not Found.")
@@ -62,8 +50,8 @@ public class PersonServiceImpl implements IPersonService {
     }
 
     @Override
-    public List<Person> findAll() {
-        return (List<Person>) personBaseRepository.findAll();
+    public Page findAll(Pageable pageable) {
+        return personBaseRepository.findAll(pageable);
     }
 
 

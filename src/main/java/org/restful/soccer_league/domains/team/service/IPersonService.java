@@ -1,19 +1,18 @@
 package org.restful.soccer_league.domains.team.service;
 
 import org.restful.soccer_league.domains.team.entity.Person;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface IPersonService<T extends Person> {
 
     T createOrUpdate(T person);
+
     void update(T person);
     void delete(T person);
-    void deleteById(long id);
 
-    T findByName(String name);
     T findById(Long id);
 
-    List<T> findAll();
+    Page<T> findAll(Pageable pageable);
 
 }
