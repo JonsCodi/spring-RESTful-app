@@ -32,8 +32,7 @@ public class Coach extends Person {
     private Team team;
 
     public Coach(String name, String address, String accrLevel, int experience) {
-        setName(name);
-        setAddress(address);
+        super(name, address);
 
         this.accrLevel = accrLevel;
         this.experience = experience;

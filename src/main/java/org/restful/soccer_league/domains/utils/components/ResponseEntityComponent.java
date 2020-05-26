@@ -20,15 +20,15 @@ public class ResponseEntityComponent {
     private final BeanPropertyFilterComponent beanPropertyFilterComponent;
 
     @Setter
-    private FiltersEnum jsonFilter;
+    private FiltersEnum[] jsonFilters;
 
     private static final String DELIMITATOR = ",";
 
-    //TODO: 5 params.. parece demais...
     public ResponseEntity<ResponseSuccessBody> returnPartialContent(String fields, Object object, Links links, Object page) {
         fields = fields.replace(" ", "");
 
-        beanPropertyFilterComponent.createFilter(jsonFilter.getFilter(), SimpleBeanPropertyFilter.filterOutAllExcept(fields.split(DELIMITATOR)));
+        beanPropertyFilterComponent.createFilter(SimpleBeanPropertyFilter.filterOutAllExcept(fields.split(DELIMITATOR)),
+                jsonFilters);
         Object modelObject = beanPropertyFilterComponent.convertToObject(object, Object.class);
 
         ObjectUtils.throwUnknownFieldException(fields, modelObject);
@@ -42,7 +42,7 @@ public class ResponseEntityComponent {
     }
 
     public ResponseEntity<ResponseSuccessBody> returnAllContent(Object object, Links links, Object page) {
-        beanPropertyFilterComponent.createFilter(jsonFilter.getFilter(), SimpleBeanPropertyFilter.serializeAll());
+        beanPropertyFilterComponent.createFilter(SimpleBeanPropertyFilter.serializeAll(), jsonFilters);
 
         ResponseSuccessBody successBody = new ResponseSuccessBody(
                 links, object, null, page

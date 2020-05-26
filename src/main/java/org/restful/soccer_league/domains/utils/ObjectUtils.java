@@ -5,7 +5,7 @@ import org.restful.soccer_league.domains.utils.exceptions.UnknownFieldException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 public final class ObjectUtils {
 
@@ -13,9 +13,9 @@ public final class ObjectUtils {
         List<Object> correctFields = new ArrayList<>();
 
         for(String field : fields.split(",")) {
-            Object fieldNameFromModelObject = getFieldName(modelObject, field);
+            Optional<Object> fieldNameFromModelObject = getFieldName(modelObject, field);
 
-            if(Objects.nonNull(fieldNameFromModelObject)) {
+            if(fieldNameFromModelObject.isPresent()) {
                 correctFields.add(field);
             }
         }
@@ -23,17 +23,23 @@ public final class ObjectUtils {
         return correctFields;
     }
 
-    private static Object getFieldName(Object modelObject, String field) {
-        Object fieldNameFromModelObject = null;
+    private static Optional<Object> getFieldName(Object modelObject, String field) {
+        Optional<Object> fieldNameFromModelObject = Optional.empty();
 
         if(modelObject instanceof ArrayList) {
             ArrayList list = (ArrayList) modelObject;
 
-            fieldNameFromModelObject = ((LinkedHashMap) list.get(0)).get(field);
+            int index = 0;
+
+            while (fieldNameFromModelObject.isEmpty() && index < list.size()) {
+                fieldNameFromModelObject = Optional.ofNullable(((LinkedHashMap) list.get(index)).get(field));
+
+                index++;
+            }
         }else if(modelObject instanceof LinkedHashMap) {
             LinkedHashMap linkedHashMap = (LinkedHashMap) modelObject;
 
-            fieldNameFromModelObject = linkedHashMap.get(field);
+            fieldNameFromModelObject = Optional.ofNullable(linkedHashMap.get(field));
         }
 
         return fieldNameFromModelObject;

@@ -4,8 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import org.restful.soccer_league.domains.utils.enums.FiltersEnum;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
 
 @Component
 @Lazy
@@ -19,8 +22,10 @@ public class BeanPropertyFilterComponent {
         this.filterProvider = new SimpleFilterProvider();
     }
 
-    public void createFilter(String modelFilter, SimpleBeanPropertyFilter simpleBeanPropertyFilter) {
-        filterProvider.addFilter(modelFilter, simpleBeanPropertyFilter);
+    public void createFilter(SimpleBeanPropertyFilter simpleBeanPropertyFilter, FiltersEnum[] filtersEnums) {
+        Arrays.asList(filtersEnums).forEach(filter -> {
+            filterProvider.addFilter(filter.getFilter(), simpleBeanPropertyFilter);
+        });
 
         objectMapper.setFilterProvider(filterProvider);
     }

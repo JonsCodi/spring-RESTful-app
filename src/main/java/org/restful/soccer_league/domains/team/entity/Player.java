@@ -34,8 +34,7 @@ public class Player extends Person {
     private boolean isCaptain;
 
     public Player(String name, String address, int number, String position, boolean isCaptain) {
-        setName(name);
-        setAddress(address);
+        super(name, address);
 
         this.number = number;
         this.position = position;

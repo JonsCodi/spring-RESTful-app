@@ -1,7 +1,7 @@
 package org.restful.soccer_league.domains.team.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
 @Entity
 public abstract class Person implements Serializable {
@@ -34,16 +35,18 @@ public abstract class Person implements Serializable {
 
     @CreationTimestamp
     @Column(name = "created_at", columnDefinition = "DATETIME")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Column(name = "updated_at", columnDefinition = "DATETIME")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 
     @Column(name = "disabled_at", columnDefinition = "DATETIME")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime disabledAt;
+
+    public Person(String name, String address) {
+        this.name = name;
+        this.address = address;
+    }
 
 }

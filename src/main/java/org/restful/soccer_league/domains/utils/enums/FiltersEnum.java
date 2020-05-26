@@ -4,7 +4,10 @@ import lombok.Getter;
 
 public enum FiltersEnum {
 
-    TEAM("team_filter");
+    TEAM("team_filter"),
+    PLAYER("player_filter"),
+    COACH("coach_filter"),
+    ;
 
     @Getter
     private String filter;

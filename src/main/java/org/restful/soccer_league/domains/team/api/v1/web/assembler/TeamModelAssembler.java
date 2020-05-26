@@ -4,7 +4,6 @@ import org.restful.soccer_league.domains.team.api.v1.web.TeamController;
 import org.restful.soccer_league.domains.team.api.v1.web.model.TeamModel;
 import org.restful.soccer_league.domains.team.entity.Team;
 import org.restful.soccer_league.domains.utils.enums.FieldsEnum;
-import org.restful.soccer_league.domains.utils.enums.FiltersEnum;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 

@@ -44,7 +44,6 @@ public class Team implements Serializable {
     @JoinColumn(name = "record_id", referencedColumnName = "id")
     private Record record = new Record();
 
-    @JsonIgnore
     @OneToMany(mappedBy = "team")
     private Set<Player> players = new HashSet<>();
 
@@ -60,16 +59,13 @@ public class Team implements Serializable {
 
     @CreationTimestamp
     @Column(name = "created_at", columnDefinition = "DATETIME")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Column(name = "updated_at", columnDefinition = "DATETIME")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime updatedAt;
 
     @Column(name = "disabled_at", columnDefinition = "DATETIME")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime disabledAt;
 
     public  Team(String name) {

@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.restful.soccer_league.domains.team.entity.Record;
-import org.restful.soccer_league.domains.utils.enums.FiltersEnum;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 

@@ -52,11 +52,6 @@ public class TeamController {
     private final TeamModelAssembler teamModelAssembler;
     private final ResponseEntityComponent responseEntityComponent;
 
-    @PostConstruct
-    public void toFilter() {
-        this.responseEntityComponent.setJsonFilter(FiltersEnum.TEAM);
-    }
-
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity create(@Valid @RequestBody TeamCreateRequest teamCreateRequest) {
         Team team = teamService.create(TeamFactory.createTeam(teamCreateRequest));
@@ -72,6 +67,8 @@ public class TeamController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseSuccessBody> getAll(@RequestParam(value = "fields", required = false, defaultValue = "all") String fields,
                                                       Pageable pageable) {
+        this.responseEntityComponent.setJsonFilters(new FiltersEnum[]{FiltersEnum.TEAM});
+
         Page<Team> teams = teamService.findAll(pageable);
         PagedModel<TeamModel> teamModel = teamResourcesAssembler.toModel(teams, teamModelAssembler);
 
