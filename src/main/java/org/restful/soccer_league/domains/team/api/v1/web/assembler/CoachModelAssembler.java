@@ -3,6 +3,7 @@ package org.restful.soccer_league.domains.team.api.v1.web.assembler;
 import org.restful.soccer_league.domains.team.api.v1.web.PersonController;
 import org.restful.soccer_league.domains.team.api.v1.web.model.CoachModel;
 import org.restful.soccer_league.domains.team.entity.Coach;
+import org.restful.soccer_league.domains.utils.enums.FieldsEnum;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
@@ -23,7 +24,7 @@ public class CoachModelAssembler extends RepresentationModelAssemblerSupport<Coa
         CoachModel coachModel = instantiateModel(entity);
 
         coachModel.add(linkTo(methodOn(PersonController.class)
-                .get(entity.getId())).withSelfRel());
+                .get(FieldsEnum.ALL.getField(), entity.getId())).withSelfRel());
 
         coachModel.setId(entity.getId());
         coachModel.setName(entity.getName());

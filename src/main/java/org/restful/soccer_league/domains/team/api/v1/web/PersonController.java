@@ -2,6 +2,8 @@ package org.restful.soccer_league.domains.team.api.v1.web;
 
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.mergepatch.JsonMergePatch;
+import cz.jirutka.rsql.parser.RSQLParser;
+import cz.jirutka.rsql.parser.ast.Node;
 import lombok.RequiredArgsConstructor;
 import org.restful.soccer_league.domains.team.api.v1.web.assembler.PersonModelAssembler;
 import org.restful.soccer_league.domains.team.api.v1.web.model.PersonModel;
@@ -15,8 +17,10 @@ import org.restful.soccer_league.domains.utils.components.ResponseEntityComponen
 import org.restful.soccer_league.domains.utils.constants.PatchMediaType;
 import org.restful.soccer_league.domains.utils.enums.FieldsEnum;
 import org.restful.soccer_league.domains.utils.enums.FiltersEnum;
+import org.restful.soccer_league.domains.utils.search.CustomRSQLVisitor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
@@ -78,9 +82,44 @@ public class PersonController {
                 personModel.getContent(), personModel.getLinks(), personModel.getMetadata());
     }
 
+    @GetMapping(params = {"search"}, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseSuccessBody> search(@RequestParam(value = "fields", required = false, defaultValue = "all") String fields,
+                                                      @RequestParam(value = "search", required = false) String search,
+                                                      Pageable pageable) {
+        this.responseEntityComponent.setJsonFilters(new FiltersEnum[]{FiltersEnum.PLAYER, FiltersEnum.COACH});
+
+        Node rootNode = new RSQLParser().parse(search);
+        Specification<Person> spec = rootNode.accept(new CustomRSQLVisitor<>());
+
+        Page<Person> persons = personService.findAll(spec, pageable);
+        PagedModel<PersonModel> pagePersonModel = personPagedResourcesAssembler.toModel(persons, personModelAssembler);
+
+        if(pagePersonModel.getContent().isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        if(fields.equals(FieldsEnum.ALL.getField())) {
+            return responseEntityComponent.returnAllContent(pagePersonModel.getContent(), pagePersonModel.getLinks(), pagePersonModel.getMetadata());
+        }
+
+        return responseEntityComponent.returnPartialContent(fields,
+                pagePersonModel.getContent(), pagePersonModel.getLinks(), pagePersonModel.getMetadata());
+    }
+
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Person> get(@PathVariable Long id) {
-        return ResponseEntity.ok(personService.findById(id));
+    public ResponseEntity<ResponseSuccessBody> get(@RequestParam(value = "fields", required = false, defaultValue = "all") String fields,
+                                      @PathVariable Long id) {
+        this.responseEntityComponent.setJsonFilters(new FiltersEnum[]{FiltersEnum.PLAYER, FiltersEnum.COACH});
+
+        Person person = personService.findById(id);
+        PersonModel personModel = personModelAssembler.toModel(person);
+
+        if (fields.equals(FieldsEnum.ALL.getField())) {
+            return responseEntityComponent.returnAllContent(personModel, null, null);
+        }
+
+        return responseEntityComponent.returnPartialContent(fields,
+                personModel, null, null);
     }
 
     @PatchMapping(path = "/{id}", consumes = PatchMediaType.APPLICATION_JSON_PATCH_VALUE)

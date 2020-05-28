@@ -11,6 +11,7 @@ import org.restful.soccer_league.domains.team.service.IPersonService;
 import org.restful.soccer_league.domains.utils.exceptions.ResourceNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -54,5 +55,9 @@ public class PersonServiceImpl implements IPersonService {
         return personBaseRepository.findAll(pageable);
     }
 
+    @Override
+    public Page findAll(Specification spec, Pageable pageable) {
+        return personBaseRepository.findAll(spec, pageable);
+    }
 
 }

@@ -95,6 +95,7 @@ public abstract class RSQLSpecification<T> {
         } else {
             path = root.get(property);
         }
+
         return path;
     }
 

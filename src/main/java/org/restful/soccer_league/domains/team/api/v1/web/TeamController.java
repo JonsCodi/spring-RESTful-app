@@ -37,7 +37,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.annotation.PostConstruct;
 import javax.validation.Valid;
 import java.net.URI;
 
@@ -84,9 +83,35 @@ public class TeamController {
                 teamModel.getContent(), teamModel.getLinks(), teamModel.getMetadata());
     }
 
+    @GetMapping(params = {"search"}, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseSuccessBody> search(@RequestParam(value = "fields", required = false, defaultValue = "all") String fields,
+                                                      @RequestParam(value = "search", required = false) String search,
+                                                      Pageable pageable) {
+        this.responseEntityComponent.setJsonFilters(new FiltersEnum[]{FiltersEnum.TEAM});
+
+        Node rootNode = new RSQLParser().parse(search);
+        Specification<Team> spec = rootNode.accept(new CustomRSQLVisitor<>());
+
+        Page<Team> teams = teamService.findAll(spec, pageable);
+        PagedModel<TeamModel> pageTeamModel = teamResourcesAssembler.toModel(teams, teamModelAssembler);
+
+        if (pageTeamModel.getContent().isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        if (fields.equals(FieldsEnum.ALL.getField())) {
+            return responseEntityComponent.returnAllContent(pageTeamModel.getContent(), pageTeamModel.getLinks(), pageTeamModel.getMetadata());
+        }
+
+        return responseEntityComponent.returnPartialContent(fields,
+                pageTeamModel.getContent(), pageTeamModel.getLinks(), pageTeamModel.getMetadata());
+    }
+
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseSuccessBody> get(@RequestParam(value = "fields", required = false, defaultValue = "all") String fields,
                                                    @PathVariable Long id) {
+        this.responseEntityComponent.setJsonFilters(new FiltersEnum[]{FiltersEnum.TEAM});
+
         Team team = teamService.findById(id);
         TeamModel teamModel = teamModelAssembler.toModel(team);
 
@@ -96,28 +121,6 @@ public class TeamController {
 
         return responseEntityComponent.returnPartialContent(fields,
                 teamModel, null, null);
-    }
-
-    @GetMapping(params = {"search"})
-    public ResponseEntity<ResponseSuccessBody> search(@RequestParam(value = "fields", required = false, defaultValue = "all") String fields,
-                                                      @RequestParam(value = "search", required = false) String search,
-                                                      Pageable pageable) {
-        Node rootNode = new RSQLParser().parse(search);
-        Specification<Team> spec = rootNode.accept(new CustomRSQLVisitor<>());
-
-        Page<Team> teams = teamService.findAll(spec, pageable);
-        PagedModel<TeamModel> teamModel = teamResourcesAssembler.toModel(teams, teamModelAssembler);
-
-        if (teamModel.getContent().isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-
-        if (fields.equals(FieldsEnum.ALL.getField())) {
-            return responseEntityComponent.returnAllContent(teamModel.getContent(), teamModel.getLinks(), teamModel.getMetadata());
-        }
-
-        return responseEntityComponent.returnPartialContent(fields,
-                teamModel.getContent(), teamModel.getLinks(), teamModel.getMetadata());
     }
 
     @PatchMapping(path = "/{id}", consumes = PatchMediaType.APPLICATION_JSON_PATCH_VALUE)

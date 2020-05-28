@@ -3,6 +3,7 @@ package org.restful.soccer_league.domains.team.service;
 import org.restful.soccer_league.domains.team.entity.Person;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 public interface IPersonService<T extends Person> {
 
@@ -14,5 +15,6 @@ public interface IPersonService<T extends Person> {
     T findById(Long id);
 
     Page<T> findAll(Pageable pageable);
+    Page<T> findAll(Specification<T> spec, Pageable pageable);
 
 }

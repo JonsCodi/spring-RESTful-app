@@ -82,12 +82,22 @@ public class RestResponseEntityExceptionHandler {
         return new ResponseEntity<>(clientResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({PropertyReferenceException.class, IllegalArgumentException.class, JsonPatchException.class, HttpMessageNotReadableException.class, UnknownFieldException.class})
+    @ExceptionHandler({PropertyReferenceException.class, IllegalArgumentException.class, JsonPatchException.class, HttpMessageNotReadableException.class})
     public ResponseEntity<Object> handlePropertyReferenceException(Exception ex, HttpServletRequest request) {
         String resource = RequestURIUtils.getResourceFromURI(request.getRequestURI());
 
         ClientResponse clientResponse = new ClientResponse(null,
                 new DetailError(StringUtils.capitalize(resource), null, ex.getMessage(), ErrorCodeEnum.INVALID.getCode()));
+
+        return new ResponseEntity<>(clientResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({UnknownFieldException.class})
+    public ResponseEntity<Object> handleUnknownFieldException(UnknownFieldException ex, HttpServletRequest request) {
+        String resource = RequestURIUtils.getResourceFromURI(request.getRequestURI());
+
+        ClientResponse clientResponse = new ClientResponse(null,
+                new DetailError(StringUtils.capitalize(resource), ex.getFieldName().toString(), ex.getMessage(), ErrorCodeEnum.INVALID.getCode()));
 
         return new ResponseEntity<>(clientResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }

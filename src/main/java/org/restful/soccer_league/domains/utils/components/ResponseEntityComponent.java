@@ -32,6 +32,7 @@ public class ResponseEntityComponent {
         Object modelObject = beanPropertyFilterComponent.convertToObject(object, Object.class);
 
         ObjectUtils.throwUnknownFieldException(fields, modelObject);
+
         List<Object> correctFields = ObjectUtils.getFieldsFromModelObject(fields, modelObject);
 
         ResponseSuccessBody successBody = new ResponseSuccessBody(
