@@ -93,7 +93,7 @@ public class TeamController {
         Node rootNode = new RSQLParser().parse(search);
         Specification<Team> spec = rootNode.accept(new CustomRSQLVisitor<>(List.of()));
 
-        Page<Team> teams = teamService.findAll(spec, pageable);
+        Page<Team> teams = teamService.searchBySpecification(spec, pageable);
         PagedModel<TeamModel> pageTeamModel = teamResourcesAssembler.toModel(teams, teamModelAssembler);
 
         if (pageTeamModel.getContent().isEmpty()) {

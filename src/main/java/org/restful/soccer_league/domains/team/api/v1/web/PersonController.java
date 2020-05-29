@@ -41,7 +41,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.Arrays;
-import java.util.LinkedList;
 
 @RequiredArgsConstructor
 @RestController
@@ -95,7 +94,7 @@ public class PersonController {
         Node rootNode = new RSQLParser().parse(search);
         Specification<Person> spec = rootNode.accept(new CustomRSQLVisitor<>(Arrays.asList(Player.class, Coach.class)));
 
-        Page<Person> persons = personService.findAll(spec, pageable);
+        Page<Person> persons = personService.searchBySpecification(spec, pageable);
         PagedModel<PersonModel> pagePersonModel = personPagedResourcesAssembler.toModel(persons, personModelAssembler);
 
         if(pagePersonModel.getContent().isEmpty()) {

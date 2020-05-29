@@ -51,6 +51,7 @@ public class PersonServiceImpl implements IPersonService {
         );
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Page findAll(Pageable pageable) {
         return personBaseRepository.findAll(pageable);
@@ -58,7 +59,7 @@ public class PersonServiceImpl implements IPersonService {
 
     @Transactional(readOnly = true)
     @Override
-    public Page findAll(Specification spec, Pageable pageable) {
+    public Page searchBySpecification(Specification spec, Pageable pageable) {
         return personBaseRepository.findAll(spec, pageable);
     }
 

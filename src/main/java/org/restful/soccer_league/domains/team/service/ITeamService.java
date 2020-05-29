@@ -15,7 +15,7 @@ public interface ITeamService {
     Team findById(Long id);
 
     Page<Team> findAll(Pageable pageable);
-    Page<Team> findAll(Specification<Team> spec, Pageable pageable);
+    Page<Team> searchBySpecification(Specification<Team> spec, Pageable pageable);
 
     void addPerson(Team team, Person person);
     void removePerson(Team team, Person person);

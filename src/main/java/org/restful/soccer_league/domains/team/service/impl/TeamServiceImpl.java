@@ -66,8 +66,9 @@ public class TeamServiceImpl implements ITeamService {
         return teamPage;
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public Page<Team> findAll(Specification<Team> spec, Pageable pageable) {
+    public Page<Team> searchBySpecification(Specification<Team> spec, Pageable pageable) {
         return teamRepository.findAll(spec, pageable);
     }
 
