@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.restful.soccer_league.domains.utils.enums.RSQLSearchOperationEnum.GREATER_THAN;
@@ -38,13 +39,14 @@ public abstract class RSQLSpecification<T> {
     private String property;
     private ComparisonOperator operator;
     private List<String> arguments;
+    private List<Class> childClasses;
 
     public List<Object> castArguments(Path<?> propertyExpression) {
         Class<? extends Object> type = propertyExpression.getJavaType();
 
         try {
             return arguments.stream().map(arg -> {
-                if (type.equals(Integer.class)) {
+                if (type.equals(Integer.class) || type.equals(int.class)) {
                     return Integer.parseInt(arg);
                 } else if (type.equals(Long.class)) {
                     return Long.parseLong(arg);
@@ -52,6 +54,8 @@ public abstract class RSQLSpecification<T> {
                     return Byte.parseByte(arg);
                 } else if (type.equals(LocalDateTime.class)) {
                     return LocalDateTime.parse(arg, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                } else if (type.equals(Boolean.class) || type.equals(boolean.class)) {
+                    return Boolean.valueOf(arg);
                 } else {
                     return arg;
                 }
@@ -64,8 +68,49 @@ public abstract class RSQLSpecification<T> {
     }
 
     //TODO: Melhorar esse processo de buscar propriedade que são aninhadas com outros objetos.
-    public Path<String> parseProperty(Root<T> root) {
+    @SuppressWarnings("unchecked")
+    private Join getJoin(PluralAttribute attr, From from) {
+        switch (attr.getCollectionType()) {
+            case COLLECTION:
+                return from.join((CollectionAttribute) attr);
+            case SET:
+                return from.join((SetAttribute) attr);
+            case LIST:
+                return from.join((ListAttribute) attr);
+            case MAP:
+                return from.join((MapAttribute) attr);
+            default:
+                return null;
+        }
+    }
+
+    public Path<String> getPathString(Root<T> root) {
+        Path<String> propertyExpression = null;
+        Exception catchException = null;
+        try {
+            propertyExpression = parseProperty(root);
+        } catch (IllegalArgumentException ex) {
+            for (int i = 0; i < getChildClasses().size(); i++) {
+                Root<T> rootChild = ((RootImpl) root).treatAs(getChildClasses().get(i));
+
+                try{ propertyExpression = parseProperty(rootChild); break;
+                } catch (IllegalArgumentException illegalArgumentException){
+                    //LOG DE ERRO...
+                    ex = illegalArgumentException;
+                }
+            }
+        }
+
+        if(Objects.isNull(propertyExpression)) {
+            throw new RuntimeException(catchException.getCause());
+        }
+
+        return propertyExpression;
+    }
+
+    private Path<String> parseProperty(Root<?> root) {
         Path<String> path;
+
         if (property.contains(".")) {
             // Nested properties
             String[] pathSteps = property.split("\\.");
@@ -97,22 +142,6 @@ public abstract class RSQLSpecification<T> {
         }
 
         return path;
-    }
-
-    @SuppressWarnings("unchecked")
-    private Join getJoin(PluralAttribute attr, From from) {
-        switch (attr.getCollectionType()) {
-            case COLLECTION:
-                return from.join((CollectionAttribute) attr);
-            case SET:
-                return from.join((SetAttribute) attr);
-            case LIST:
-                return from.join((ListAttribute) attr);
-            case MAP:
-                return from.join((MapAttribute) attr);
-            default:
-                return null;
-        }
     }
 
     public void isInvalidOperationWithStringTypeThenThrowException(RootImpl root, Path<String> propertyExpression, String field) {

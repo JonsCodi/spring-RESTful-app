@@ -6,11 +6,14 @@ import cz.jirutka.rsql.parser.ast.OrNode;
 import cz.jirutka.rsql.parser.ast.RSQLVisitor;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.List;
+
 public class CustomRSQLVisitor<T> implements RSQLVisitor<Specification<T>, Void> {
+
     private GenericRSQLSpecBuilder<T> builder;
 
-    public CustomRSQLVisitor() {
-        builder = new GenericRSQLSpecBuilder<T>();
+    public CustomRSQLVisitor(List<Class> childClasses) {
+        builder = new GenericRSQLSpecBuilder<T>(childClasses);
     }
 
     @Override

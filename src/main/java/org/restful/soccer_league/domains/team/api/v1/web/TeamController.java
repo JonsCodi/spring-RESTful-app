@@ -39,6 +39,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -90,7 +91,7 @@ public class TeamController {
         this.responseEntityComponent.setJsonFilters(new FiltersEnum[]{FiltersEnum.TEAM});
 
         Node rootNode = new RSQLParser().parse(search);
-        Specification<Team> spec = rootNode.accept(new CustomRSQLVisitor<>());
+        Specification<Team> spec = rootNode.accept(new CustomRSQLVisitor<>(List.of()));
 
         Page<Team> teams = teamService.findAll(spec, pageable);
         PagedModel<TeamModel> pageTeamModel = teamResourcesAssembler.toModel(teams, teamModelAssembler);

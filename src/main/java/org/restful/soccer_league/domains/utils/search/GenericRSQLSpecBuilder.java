@@ -4,13 +4,19 @@ import cz.jirutka.rsql.parser.ast.ComparisonNode;
 import cz.jirutka.rsql.parser.ast.LogicalNode;
 import cz.jirutka.rsql.parser.ast.LogicalOperator;
 import cz.jirutka.rsql.parser.ast.Node;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@AllArgsConstructor
 public class GenericRSQLSpecBuilder<T> {
+
+    @Getter
+    private List<Class> childEntities;
 
     public Specification<T> createSpecification(Node node) {
         if (node instanceof LogicalNode) {
@@ -45,10 +51,11 @@ public class GenericRSQLSpecBuilder<T> {
 
     public Specification<T> createSpecification(ComparisonNode comparisonNode) {
         Specification<T> result = Specification.where(
-                new GenericRSQLSpecification<T>(
+                new GenericRSQLSpecification<>(
                         comparisonNode.getSelector(),
                         comparisonNode.getOperator(),
-                        comparisonNode.getArguments()
+                        comparisonNode.getArguments(),
+                        getChildEntities()
                 )
         );
         return result;

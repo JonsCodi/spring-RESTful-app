@@ -8,7 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.restful.soccer_league.domains.team.api.v1.web.assembler.PersonModelAssembler;
 import org.restful.soccer_league.domains.team.api.v1.web.model.PersonModel;
 import org.restful.soccer_league.domains.team.api.v1.web.request.BasePersonRequest;
+import org.restful.soccer_league.domains.team.entity.Coach;
 import org.restful.soccer_league.domains.team.entity.Person;
+import org.restful.soccer_league.domains.team.entity.Player;
 import org.restful.soccer_league.domains.team.factory.PersonFactory;
 import org.restful.soccer_league.domains.team.service.IPersonService;
 import org.restful.soccer_league.domains.utils.api.web.v1.response.ResponseSuccessBody;
@@ -38,6 +40,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Arrays;
+import java.util.LinkedList;
 
 @RequiredArgsConstructor
 @RestController
@@ -89,7 +93,7 @@ public class PersonController {
         this.responseEntityComponent.setJsonFilters(new FiltersEnum[]{FiltersEnum.PLAYER, FiltersEnum.COACH});
 
         Node rootNode = new RSQLParser().parse(search);
-        Specification<Person> spec = rootNode.accept(new CustomRSQLVisitor<>());
+        Specification<Person> spec = rootNode.accept(new CustomRSQLVisitor<>(Arrays.asList(Player.class, Coach.class)));
 
         Page<Person> persons = personService.findAll(spec, pageable);
         PagedModel<PersonModel> pagePersonModel = personPagedResourcesAssembler.toModel(persons, personModelAssembler);

@@ -1,6 +1,7 @@
 package org.restful.soccer_league.domains.utils.search;
 
 import cz.jirutka.rsql.parser.ast.ComparisonOperator;
+import org.hibernate.query.criteria.internal.path.RootImpl;
 import org.restful.soccer_league.domains.utils.enums.RSQLSearchOperationEnum;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -19,15 +20,16 @@ public class GenericRSQLSpecification<T> extends RSQLSpecification<T> implements
     private static final String TO_CHAR = "TO_CHAR";
     private static final String DATE_TIME_SQL_FORMAT = "YYYY-MM-DD HH24:MI:SS";
 
-    public GenericRSQLSpecification(String property, ComparisonOperator operator, List<String> arguments) {
-        super(property, operator, arguments);
+    public GenericRSQLSpecification(String property, ComparisonOperator operator, List<String> arguments, List<Class> childClasses) {
+        super(property, operator, arguments, childClasses);
     }
 
     @Override
     public Predicate toPredicate(Root<T> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
         criteriaQuery.distinct(true);
 
-        Path<String> propertyExpression = parseProperty(root);
+        Path<String> propertyExpression = getPathString(root);
+
         List<Object> args = castArguments(propertyExpression);
         Object argument = args.get(0);
 
