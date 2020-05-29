@@ -22,14 +22,14 @@ public class Player extends Person {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    public int number;
+    private int number;
 
-    public String position;
+    private String position;
 
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "team_id")
-    public Team team;
+        private Team team;
 
     private boolean isCaptain;
 
