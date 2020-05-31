@@ -113,6 +113,14 @@ public class TeamServiceImpl implements ITeamService {
         }
     }
 
+    /**
+     * Método não mais necessário. a operação Delete do
+     * {@link org.restful.soccer_league.domains.team.api.v1.web.PersonHierarchyController}
+     * entrou em @Deprecated
+     *
+     * @Deprecated
+     */
+    @Deprecated
     @Override
     public void removePerson(Team team, Person person) {
         if (person instanceof Player) {
