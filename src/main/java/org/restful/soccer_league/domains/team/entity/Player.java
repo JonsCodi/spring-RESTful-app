@@ -1,6 +1,5 @@
 package org.restful.soccer_league.domains.team.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,10 +25,9 @@ public class Player extends Person {
 
     private String position;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "team_id")
-        private Team team;
+    private Team team;
 
     private boolean isCaptain;
 

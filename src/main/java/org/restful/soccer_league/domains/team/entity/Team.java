@@ -1,6 +1,5 @@
 package org.restful.soccer_league.domains.team.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,16 +43,16 @@ public class Team implements Serializable {
     @JoinColumn(name = "record_id", referencedColumnName = "id")
     private Record record = new Record();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "team")
     private Set<Player> players = new HashSet<>();
 
     private String captain;
 
-    @OneToOne
-    @JoinColumn(name = "coach_id", referencedColumnName = "id")
+    @JsonIgnore
+    @OneToOne(mappedBy = "team")
     private Coach coach;
 
-    @JsonIgnore
     @ManyToMany(mappedBy = "teams")
     private Set<SoccerLeague> soccerLeagues = new HashSet<>();
 
