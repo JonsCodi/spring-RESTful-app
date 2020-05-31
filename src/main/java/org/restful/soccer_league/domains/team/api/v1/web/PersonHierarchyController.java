@@ -1,6 +1,8 @@
 package org.restful.soccer_league.domains.team.api.v1.web;
 
 import lombok.RequiredArgsConstructor;
+import org.restful.soccer_league.domains.team.api.v1.web.assembler.PersonModelAssembler;
+import org.restful.soccer_league.domains.team.api.v1.web.model.PersonModel;
 import org.restful.soccer_league.domains.team.api.v1.web.request.BasePersonRequest;
 import org.restful.soccer_league.domains.team.entity.Person;
 import org.restful.soccer_league.domains.team.entity.Player;
@@ -8,7 +10,16 @@ import org.restful.soccer_league.domains.team.entity.Team;
 import org.restful.soccer_league.domains.team.factory.PersonFactory;
 import org.restful.soccer_league.domains.team.service.IPersonService;
 import org.restful.soccer_league.domains.team.service.ITeamService;
+import org.restful.soccer_league.domains.utils.api.web.v1.response.ResponseSuccessBody;
+import org.restful.soccer_league.domains.utils.components.ResponseEntityComponent;
+import org.restful.soccer_league.domains.utils.enums.FieldsEnum;
+import org.restful.soccer_league.domains.utils.enums.FiltersEnum;
 import org.restful.soccer_league.domains.utils.exceptions.ResourceNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,13 +28,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -34,6 +44,9 @@ public class PersonHierarchyController {
 
     private final IPersonService<Person> personService;
     private final ITeamService teamService;
+    private final PagedResourcesAssembler<Person> personPagedResourcesAssembler;
+    private final PersonModelAssembler personModelAssembler;
+    private final ResponseEntityComponent responseEntityComponent;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Person> create(@PathVariable Long idTeam, @Valid  @RequestBody BasePersonRequest basePersonRequest) {
@@ -53,15 +66,31 @@ public class PersonHierarchyController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Person>> getAll(@PathVariable Long idTeam) {
-        Team team = teamService.findById(idTeam);
+    public ResponseEntity<ResponseSuccessBody> getAll(@PathVariable Long idTeam,
+                                                      @RequestParam(value = "fields", required = false, defaultValue = "all") String fields,
+                                                      Pageable pageable) {
+        this.responseEntityComponent.setJsonFilters(new FiltersEnum[]{FiltersEnum.COACH, FiltersEnum.PLAYER});
 
-        List<Person> persons = new ArrayList<>(team.getPlayers());
-        if(Objects.nonNull(team.getCoach())){
-            persons.add(team.getCoach());
+        Page<Person> personsFromTeam = personService.findAllByTeamId(idTeam, pageable);
+
+        if(personsFromTeam.getContent().isEmpty()) {
+            isTeamNotExistThenThrowsNotFoundException(idTeam);
+
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
-        return ResponseEntity.ok(persons);
+        PagedModel<PersonModel> personModel = personPagedResourcesAssembler.toModel(personsFromTeam, personModelAssembler);
+
+        if (fields.equals(FieldsEnum.ALL.getField())) {
+            return responseEntityComponent.returnAllContent(personModel.getContent(), personModel.getLinks(), personModel.getMetadata());
+        }
+
+        return responseEntityComponent.returnPartialContent(fields,
+                personModel.getContent(), personModel.getLinks(), personModel.getMetadata());
+    }
+
+    private void isTeamNotExistThenThrowsNotFoundException(Long idTeam) {
+        teamService.findById(idTeam);
     }
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

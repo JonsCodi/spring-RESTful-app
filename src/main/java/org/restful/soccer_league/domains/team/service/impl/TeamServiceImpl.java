@@ -97,7 +97,6 @@ public class TeamServiceImpl implements ITeamService {
         updateCaptain(team, person);
 
         update(team);
-
         playerRepository.save(person);
     }
 

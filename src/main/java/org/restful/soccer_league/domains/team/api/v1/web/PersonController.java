@@ -71,11 +71,12 @@ public class PersonController {
         this.responseEntityComponent.setJsonFilters(new FiltersEnum[]{FiltersEnum.COACH, FiltersEnum.PLAYER});
 
         Page<Person> persons = personService.findAll(pageable);
-        PagedModel<PersonModel> personModel = personPagedResourcesAssembler.toModel(persons, personModelAssembler);
 
-        if (personModel.getContent().isEmpty()) {
+        if (persons.getContent().isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+
+        PagedModel<PersonModel> personModel = personPagedResourcesAssembler.toModel(persons, personModelAssembler);
 
         if (fields.equals(FieldsEnum.ALL.getField())) {
             return responseEntityComponent.returnAllContent(personModel.getContent(), personModel.getLinks(), personModel.getMetadata());

@@ -96,7 +96,7 @@ public abstract class RSQLSpecification<T> {
                 try{ propertyExpression = parseProperty(rootChild); break;
                 } catch (IllegalArgumentException illegalArgumentException){
                     //LOG DE ERRO...
-                    ex = illegalArgumentException;
+                    catchException = illegalArgumentException;
                 }
             }
         }
