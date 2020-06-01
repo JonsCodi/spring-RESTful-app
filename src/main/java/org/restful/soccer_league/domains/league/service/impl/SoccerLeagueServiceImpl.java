@@ -6,9 +6,11 @@ import org.restful.soccer_league.domains.league.repository.ISoccerRepository;
 import org.restful.soccer_league.domains.league.service.ISoccerLeagueService;
 import org.restful.soccer_league.domains.utils.exceptions.ConflictException;
 import org.restful.soccer_league.domains.utils.exceptions.ResourceNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -36,25 +38,18 @@ public class SoccerLeagueServiceImpl implements ISoccerLeagueService {
     }
 
     @Override
-    public void delete(SoccerLeague soccerLeague) {
-        soccerRepository.delete(soccerLeague);
-    }
-
-    @Override
     public void deleteById(Long id) {
         soccerRepository.deleteById(id);
     }
 
     @Override
-    public List<SoccerLeague> findAll() {
-        return (List<SoccerLeague>) soccerRepository.findAll();
+    public Page<SoccerLeague> findAll(Pageable pageable) {
+        return soccerRepository.findAll(pageable);
     }
 
     @Override
-    public SoccerLeague findByName(String name) {
-        return soccerRepository.findByName(name).orElseThrow(
-                () -> new ResourceNotFoundException("Resource not Found.", SOCCER_LEAGUES)
-        );
+    public Page<SoccerLeague> searchBySpecification(Specification<SoccerLeague> spec, Pageable pageable) {
+        return soccerRepository.findAll(spec, pageable);
     }
 
     @Override

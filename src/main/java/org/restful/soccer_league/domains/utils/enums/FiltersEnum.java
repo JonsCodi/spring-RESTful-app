@@ -7,6 +7,7 @@ public enum FiltersEnum {
     TEAM("team_filter"),
     PLAYER("player_filter"),
     COACH("coach_filter"),
+    SOCCER_LEAGUE("soccer-league_filter"),
     ;
 
     @Getter

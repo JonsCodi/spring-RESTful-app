@@ -54,7 +54,7 @@ public class PersonController {
     private final ResponseEntityComponent responseEntityComponent;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Person> create(@RequestBody BasePersonRequest basePersonRequest) {
+    public ResponseEntity create(@RequestBody BasePersonRequest basePersonRequest) {
         Person person = personService.createOrUpdate(PersonFactory.createPerson(basePersonRequest));
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
