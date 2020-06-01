@@ -18,5 +18,6 @@ public interface IPersonService<T extends Person> {
     Page<T> findAll(Pageable pageable);
     Page<T> findAllByTeamId(Long idTeam, Pageable pageable);
     Page<T> searchBySpecification(Specification<T> spec, Pageable pageable);
+    Page<T> findAllByTeamId(Long idTeam, String search, Pageable pageable);
 
 }

@@ -109,6 +109,30 @@ public class PersonHierarchyController {
                 personModel, null, null);
     }
 
+    @GetMapping(params = {"search"}, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseSuccessBody> search(@PathVariable() Long idTeam,
+                                                      @RequestParam(value = "fields", required = false, defaultValue = "all") String fields,
+                                                      @RequestParam(value = "search", required = false) String search,
+                                                      Pageable pageable) {
+        isTeamNotExistThenThrowsNotFoundException(idTeam);
+
+        this.responseEntityComponent.setJsonFilters(new FiltersEnum[]{FiltersEnum.PLAYER, FiltersEnum.COACH});
+
+        Page<Person> persons = personService.findAllByTeamId(idTeam, search, pageable);
+        PagedModel<PersonModel> pagePersonModel = personPagedResourcesAssembler.toModel(persons, personModelAssembler);
+
+        if (pagePersonModel.getContent().isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        if (fields.equals(FieldsEnum.ALL.getField())) {
+            return responseEntityComponent.returnAllContent(pagePersonModel.getContent(), pagePersonModel.getLinks(), pagePersonModel.getMetadata());
+        }
+
+        return responseEntityComponent.returnPartialContent(fields,
+                pagePersonModel.getContent(), pagePersonModel.getLinks(), pagePersonModel.getMetadata());
+    }
+
     @PatchMapping(path = "/{id}", consumes = PatchMediaType.APPLICATION_JSON_PATCH_VALUE)
     public ResponseEntity update(@PathVariable Long idTeam, @PathVariable Long id, @RequestBody JsonPatch jsonPatch) {
         isTeamNotExistThenThrowsNotFoundException(idTeam);
