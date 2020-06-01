@@ -134,6 +134,7 @@ public class PersonServiceImpl implements IPersonService<Person> {
                 - Buscar o Operador Lógico
                 - Criar novo Node com o new RSQLParser().parse(searchAfterCorrectFields)
             Deixar isso genérico para aceitar qualquer Entidade que há um Parent;
+            Essa tarefa está em conjunto com esse problema: https://github.com/JonsCodi/spring-RESTful-app/issues/2
 
         Specification<Player> specPlayer = rootNode.accept(new CustomRSQLVisitor<>(List.of()));
         List<Player> players = playerRepository.findAll(specPlayer
