@@ -23,6 +23,21 @@ public final class ObjectUtils {
         return correctFields;
     }
 
+    public static List<Object> getDeclaredFields(String fields, Object object) {
+        List<Object> correctFields = new ArrayList<>();
+
+        for(String field : fields.split(",")) {
+            try {
+                correctFields.add(object.getClass().getDeclaredField(field).getName());
+            } catch (NoSuchFieldException e) {
+                //e.printStackTrace();
+                //LOG ERRO
+            }
+        }
+
+        return correctFields;
+    }
+
     private static Optional<Object> getFieldName(Object modelObject, String field) {
         Optional<Object> fieldNameFromModelObject = Optional.empty();
 
