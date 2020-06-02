@@ -30,7 +30,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/soccer-leagues/{id}/games")
+@RequestMapping("/games")
 public class GameController {
 
     private final IGameService gameService;
