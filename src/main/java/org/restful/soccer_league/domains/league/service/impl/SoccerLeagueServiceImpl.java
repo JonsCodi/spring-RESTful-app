@@ -2,7 +2,7 @@ package org.restful.soccer_league.domains.league.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.restful.soccer_league.domains.league.entity.SoccerLeague;
-import org.restful.soccer_league.domains.league.repository.ISoccerRepository;
+import org.restful.soccer_league.domains.league.repository.ISoccerLeagueRepository;
 import org.restful.soccer_league.domains.league.service.ISoccerLeagueService;
 import org.restful.soccer_league.domains.utils.exceptions.ConflictException;
 import org.restful.soccer_league.domains.utils.exceptions.ResourceNotFoundException;
@@ -17,7 +17,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class SoccerLeagueServiceImpl implements ISoccerLeagueService {
 
-    private final ISoccerRepository soccerRepository;
+    private final ISoccerLeagueRepository soccerRepository;
 
     private final static String SOCCER_LEAGUES = "Soccer-Leagues";
 
