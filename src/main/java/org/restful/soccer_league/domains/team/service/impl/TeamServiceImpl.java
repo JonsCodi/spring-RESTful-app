@@ -12,6 +12,7 @@ import org.restful.soccer_league.domains.team.service.ITeamService;
 import org.restful.soccer_league.domains.utils.exceptions.ConflictException;
 import org.restful.soccer_league.domains.utils.exceptions.ForbiddenException;
 import org.restful.soccer_league.domains.utils.exceptions.ResourceNotFoundException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -48,7 +49,11 @@ public class TeamServiceImpl implements ITeamService {
 
     @Override
     public void deleteById(long id) {
-        teamRepository.deleteById(id);
+        try{
+            teamRepository.deleteById(id);
+        }catch (EmptyResultDataAccessException ex) {
+            throw new ResourceNotFoundException("Resource not found.", TEAMS);
+        }
     }
 
     @Override
