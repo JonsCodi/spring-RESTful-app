@@ -52,7 +52,7 @@ public class SoccerLeagueController {
     private final ResponseEntityComponent responseEntityComponent;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SoccerLeague> create(@RequestBody SoccerLeagueRequest soccerLeagueRequest) {
+    public ResponseEntity create(@RequestBody SoccerLeagueRequest soccerLeagueRequest) {
         SoccerLeague soccerLeague = soccerLeagueService.create(SoccerLeagueFactory.createSoccerLeagueObject(soccerLeagueRequest));
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -109,8 +109,8 @@ public class SoccerLeagueController {
     }
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseSuccessBody> get(@PathVariable Long id,
-                                                   @RequestParam(value = "fields", required = false, defaultValue = "all") String fields) {
+    public ResponseEntity<ResponseSuccessBody> get(@RequestParam(value = "fields", required = false, defaultValue = "all") String fields,
+                                                   @PathVariable Long id) {
         this.responseEntityComponent.setJsonFilters(new FiltersEnum[]{FiltersEnum.SOCCER_LEAGUE});
 
         SoccerLeague soccerLeague = soccerLeagueService.findById(id);
