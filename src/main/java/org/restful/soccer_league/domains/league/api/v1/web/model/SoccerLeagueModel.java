@@ -1,6 +1,7 @@
 package org.restful.soccer_league.domains.league.api.v1.web.model;
 
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Relation(collectionRelation = "leagues", itemRelation = "league")
+@JsonFilter("soccer-league_filter")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SoccerLeagueModel extends RepresentationModel<SoccerLeagueModel> implements Serializable {
 
