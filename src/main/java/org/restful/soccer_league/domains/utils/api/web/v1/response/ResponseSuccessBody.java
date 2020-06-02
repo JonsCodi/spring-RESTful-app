@@ -21,7 +21,7 @@ public class ResponseSuccessBody implements Serializable {
     private String date;
     private String status;
     private Object fields;
-    private Object data;
+    private final Object data;
     private Links links;
     private Object page;
 

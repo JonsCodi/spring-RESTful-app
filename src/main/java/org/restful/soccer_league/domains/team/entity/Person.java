@@ -33,6 +33,8 @@ public abstract class Person implements Serializable {
 
     private String address;
 
+    private String personType;
+
     @CreationTimestamp
     @Column(name = "created_at", columnDefinition = "DATETIME")
     private LocalDateTime createdAt;
@@ -44,9 +46,10 @@ public abstract class Person implements Serializable {
     @Column(name = "disabled_at", columnDefinition = "DATETIME")
     private LocalDateTime disabledAt;
 
-    public Person(String name, String address) {
+    public Person(String name, String address, String personType) {
         this.name = name;
         this.address = address;
+        this.personType = personType;
     }
 
 }

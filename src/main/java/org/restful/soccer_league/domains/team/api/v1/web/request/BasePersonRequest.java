@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.restful.soccer_league.domains.team.enums.PersonType;
+import org.restful.soccer_league.domains.team.enums.PersonTypeEnum;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -32,6 +32,6 @@ public class BasePersonRequest implements Serializable {
     private String address;
 
     @NotNull
-    private PersonType personType;
+    private PersonTypeEnum personType;
 
 }

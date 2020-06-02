@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.restful.soccer_league.domains.team.enums.PersonType;
+import org.restful.soccer_league.domains.team.enums.PersonTypeEnum;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
@@ -43,6 +43,6 @@ public abstract class PersonModel extends RepresentationModel<PersonModel> imple
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime disabledAt;
 
-    private PersonType personType;
+    private PersonTypeEnum personType;
 
 }

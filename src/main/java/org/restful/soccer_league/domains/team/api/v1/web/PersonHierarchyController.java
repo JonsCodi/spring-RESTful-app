@@ -110,7 +110,7 @@ public class PersonHierarchyController {
     }
 
     @GetMapping(params = {"search"}, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseSuccessBody> search(@PathVariable() Long idTeam,
+    public ResponseEntity<ResponseSuccessBody> search(@PathVariable Long idTeam,
                                                       @RequestParam(value = "fields", required = false, defaultValue = "all") String fields,
                                                       @RequestParam(value = "search", required = false) String search,
                                                       Pageable pageable) {

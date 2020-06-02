@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.restful.soccer_league.domains.team.enums.PersonTypeEnum;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -32,7 +33,7 @@ public class Coach extends Person {
     private Team team;
 
     public Coach(String name, String address, String accrLevel, int experience) {
-        super(name, address);
+        super(name, address, PersonTypeEnum.COACH.name());
 
         this.accrLevel = accrLevel;
         this.experience = experience;

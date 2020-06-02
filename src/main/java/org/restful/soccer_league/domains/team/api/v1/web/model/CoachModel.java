@@ -3,7 +3,7 @@ package org.restful.soccer_league.domains.team.api.v1.web.model;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
-import org.restful.soccer_league.domains.team.enums.PersonType;
+import org.restful.soccer_league.domains.team.enums.PersonTypeEnum;
 
 @Setter
 @JsonFilter("coach_filter")
@@ -14,7 +14,7 @@ public class CoachModel extends PersonModel {
     private int experience;
 
     public CoachModel() {
-        setPersonType(PersonType.COACH);
+        setPersonType(PersonTypeEnum.COACH);
     }
 
 }
