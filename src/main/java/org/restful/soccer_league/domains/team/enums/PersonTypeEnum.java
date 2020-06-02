@@ -1,7 +1,7 @@
 package org.restful.soccer_league.domains.team.enums;
 
-public enum  PersonType {
+public enum PersonTypeEnum {
 
-    PLAYER, COACH
+    COACH, PLAYER;
 
 }
