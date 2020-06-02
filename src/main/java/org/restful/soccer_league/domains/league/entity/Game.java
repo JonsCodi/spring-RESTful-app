@@ -12,6 +12,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -40,6 +42,10 @@ public class Game implements Serializable {
 
     @Column(name = "score_team_B")
     private int scoreTeamB;
+
+    @ManyToOne
+    @JoinColumn(name = "soccer_league_id")
+    private SoccerLeague soccerLeague;
 
     @CreationTimestamp
     @Column(name = "created_at", columnDefinition = "DATETIME")

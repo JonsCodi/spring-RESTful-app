@@ -50,7 +50,6 @@ public class SoccerLeague implements Serializable {
     private Set<Team> teams = new HashSet<>();
 
     @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinColumn(name = "soccer_league_id")
     private Set<Game> games = new HashSet<>();
 
     @CreationTimestamp
