@@ -6,7 +6,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.Optional;
 
-public interface ISoccerRepository extends PagingAndSortingRepository<SoccerLeague, Long>, JpaSpecificationExecutor<SoccerLeague> {
+public interface ISoccerLeagueRepository extends PagingAndSortingRepository<SoccerLeague, Long>, JpaSpecificationExecutor<SoccerLeague> {
 
     Optional<SoccerLeague> findByName(String name);
 
